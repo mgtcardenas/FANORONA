@@ -1,3 +1,5 @@
+package minimax;
+
 /**
  * Created by Gerardo Ayala on 10/7/17.
  */
