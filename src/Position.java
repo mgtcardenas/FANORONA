@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
  *         as a StackPane with a rectangle that varies in color depending
  *         on the type attribute
  */
-public class GridSpace extends Rectangle
+public class Position extends Rectangle
 {
 	public static final double	GRIDSPACE_SIZE	= 100;
 	private Chip				chip;
@@ -18,12 +18,12 @@ public class GridSpace extends Rectangle
 	private int					yCoordinate;
 	
 	/**
-	 * To create a GridSpace it is only necessary to give the type and the coordinates on the Board
+	 * To create a Position it is only necessary to give the type and the coordinates on the Board
 	 *
 	 * @param y the row this chip is located at, counting from 0
 	 * @param x the column this chip is located at, counting from 0
 	 */
-	public GridSpace(int y, int x)
+	public Position(int y, int x)
 	{
 		this.chip			= null;
 		this.xCoordinate	= x;
@@ -32,7 +32,7 @@ public class GridSpace extends Rectangle
 		this.setWidth(GRIDSPACE_SIZE);
 		this.setHeight(GRIDSPACE_SIZE);
 		this.setFill(Color.TRANSPARENT); // If we set visible to false, then actions are not taken into account
-	}// end GridSpace - constructor
+	}// end Position - constructor
 	
 	// region Getters & Setters
 	public Chip getChip()
@@ -55,4 +55,4 @@ public class GridSpace extends Rectangle
 		return yCoordinate;
 	}// end getyCoordinate
 		// endregion Getters & Setters
-}// end GridSpace - class
+}// end Position - class

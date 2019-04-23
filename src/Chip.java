@@ -3,8 +3,8 @@ import javafx.scene.shape.Circle;
 
 public class Chip extends Circle
 {
-	public static final double	RADIUS	= 25; // for the view
-	private GridSpace			gridSpace;
+	public static final double   RADIUS	= 25; // for the view
+	private             Position position;
 	
 	/**
 	 * To create a Chip, only a the color of it
@@ -14,21 +14,21 @@ public class Chip extends Circle
 	public Chip(Color color)
 	{
 		this.setFill(color);
-		this.gridSpace = null;
+		this.position = null;
 		
 		this.setRadius(RADIUS);
 		this.setStroke(Color.BLACK);
 	}// end Chip - constructor
 	
 	// region Getters & Setters
-	public GridSpace getGridSpace()
+	public Position getPosition()
 	{
-		return gridSpace;
-	}// end getGridSpace
+		return position;
+	}// end getPosition
 	
-	public void setGridSpace(GridSpace gridSpace)
+	public void setPosition(Position position)
 	{
-		this.gridSpace = gridSpace;
-	}// end setGridSpace
+		this.position = position;
+	}// end setPosition
 		// endregion Getters & Setters
 }// end Chip - class

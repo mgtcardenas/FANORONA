@@ -5,17 +5,17 @@
  *         the Singleton design pattern, since there can only be one board for a game.
  *
  *         The board is represented by a grid of spaces which is treated as a bidimensional
- *         array of type GridSpace.
+ *         array of type Position.
  */
 public class Board
 {
-	private static Board	uniqueInstance;
-	private GridSpace[][]	grid;
+	private static Board uniqueInstance;
+	private Position[][] grid;
 	
 	/**
 	 * Gives access to the grid on the board
 	 */
-	public GridSpace[][] getGrid()
+	public Position[][] getGrid()
 	{
 		return this.grid;
 	}// end getGrid
@@ -33,11 +33,11 @@ public class Board
 		if (uniqueInstance != null)
 			throw new SingletonException("THERE CAN ONLY BE ONE BOARD!");
 		
-		this.grid = new GridSpace[5][9]; // Create a board of 15 by 15 spaces (255 in total)
+		this.grid = new Position[5][9]; // Create a board of 15 by 15 spaces (255 in total)
 		
 		for (int y = 0; y < 5; y++) // Fill the board with simple grid spaces
 			for (int x = 0; x < 9; x++)
-				this.grid[y][x] = new GridSpace(y, x);
+				this.grid[y][x] = new Position(y, x);
 	}// end Board - constructor
 	
 	/**

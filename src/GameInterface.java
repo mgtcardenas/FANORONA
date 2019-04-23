@@ -2,7 +2,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
-public class View extends AnchorPane
+public class GameInterface extends AnchorPane
 {
 	public static final double	SCENE_WIDTH		= 900;
 	public static final double	SCENE_HEIGHT	= 500;
@@ -19,13 +19,13 @@ public class View extends AnchorPane
 	
 	/**
 	 * It is not necessary to give the Board as arguments since it is a singleton, but the
-	 * View does use them to build itself
+	 * GameInterface does use them to build itself
 	 */
-	public View()
+	public GameInterface()
 	{
 		board = Board.instance();
 		buildComponents();
-	}// end View
+	}// end GameInterface
 	
 	/**
 	 * Place all of the visual elements where they should go
@@ -60,22 +60,22 @@ public class View extends AnchorPane
 	}// end buildComponents
 	
 	/**
-	 * Puts all the GridSpaces that form part of the Board on the View in their correct coordinate
+	 * Puts all the GridSpaces that form part of the Board on the GameInterface in their correct coordinate
 	 *
 	 * @param board the game board
 	 */
 	private void placeGridSpaces(Board board)
 	{
-		GridSpace gridSpace;
+		Position position;
 		
 		for (int y = 0; y < board.getGrid().length; y++)
 		{
 			for (int x = 0; x < board.getGrid()[y].length; x++)
 			{
-				gridSpace = board.getGrid()[y][x];
-				gridSpace.setLayoutX(x * GridSpace.GRIDSPACE_SIZE);
-				gridSpace.setLayoutY(y * GridSpace.GRIDSPACE_SIZE);
-				getChildren().add(gridSpace);
+				position = board.getGrid()[y][x];
+				position.setLayoutX(x * Position.GRIDSPACE_SIZE);
+				position.setLayoutY(y * Position.GRIDSPACE_SIZE);
+				getChildren().add(position);
 			}// end for - x
 		}// end for - y
 	}// end placeGridSpaces
@@ -96,7 +96,7 @@ public class View extends AnchorPane
 	}// end setEventHandlersAndActionListeners
 	
 	/**
-	 * Creates white chips with the correct coordinates on the View
+	 * Creates white chips with the correct coordinates on the GameInterface
 	 *
 	 * @param whiteChips the white chips that belong to the player
 	 */
@@ -150,7 +150,7 @@ public class View extends AnchorPane
 	}// end drawWhiteChips
 	
 	/**
-	 * Creates black chips with the correct coordinates no the View
+	 * Creates black chips with the correct coordinates no the GameInterface
 	 *
 	 * @param blackChips the black chips that belong to the A.I.
 	 */
@@ -215,7 +215,7 @@ public class View extends AnchorPane
 	}// end displayChips
 	
 	/**
-	 * Creates vertical lines with the correct coordinates on the View
+	 * Creates vertical lines with the correct coordinates on the GameInterface
 	 *
 	 * @param verticalLines the vertical lines array
 	 */
@@ -233,7 +233,7 @@ public class View extends AnchorPane
 	}// end drawVerticalLines
 	
 	/**
-	 * Creates horizontal lines with the correct coordinates on the View
+	 * Creates horizontal lines with the correct coordinates on the GameInterface
 	 *
 	 * @param horizontalLines the horizontal lines array
 	 */
@@ -251,7 +251,7 @@ public class View extends AnchorPane
 	}// end drawHorizontalLines
 	
 	/**
-	 * Creates long diagonal lines with the correct coordinates on the View
+	 * Creates long diagonal lines with the correct coordinates on the GameInterface
 	 *
 	 * @param longDiagonalLines the long diagonal lines array
 	 */
@@ -283,7 +283,7 @@ public class View extends AnchorPane
 	}// end drawLongDiagonalLines
 	
 	/**
-	 * Creates short diagonal lines with the correct coordinates on the View
+	 * Creates short diagonal lines with the correct coordinates on the GameInterface
 	 *
 	 * @param shortDiagonalLines the short diagonal lines array
 	 */
@@ -305,4 +305,4 @@ public class View extends AnchorPane
 		for (Line l : lines)
 			getChildren().add(l);
 	}// end displayLines
-}// end View - class
+}// end GameInterface - class

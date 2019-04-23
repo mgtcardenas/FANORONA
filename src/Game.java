@@ -1,52 +1,29 @@
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 
 public class Game
 {
-	private Board	board;
-	private View	view;
-	private Player	user;
-	private Player	aI;
-	private Player	currentPlayer;
-	private Chip	selectedChip;
+	private Board			board;
+	private GameInterface	gameInterface;
+	private Chip			selectedChip;
 	
-	/**
-	 * Some of these arguments are not strictly necessary, but they are there because they make sense.
-	 * The important arguments are the user, the aI and the view
-	 * 
-	 * @param board the Board of the game
-	 * @param user  the user, a player
-	 * @param aI    the artificial intelligence, a player
-	 * @param view  a pane with all the visual elements on it
-	 */
-	public Game(Board board, Player user, Player aI, View view)
+	public Game(Board board, GameInterface gameInterface)
 	{
-		this.board	= board;
-		this.view	= view;
-		this.user	= user;
-		this.aI		= aI;
+		this.board			= board;
+		this.gameInterface	= gameInterface;
 	}// end Game - constructor
-	
-	// region Getters
-	public Player getUser()
-	{
-		return user;
-	}// end getUser
-	
-	public Player getaI()
-	{
-		return aI;
-	}// end getaI
-		// endregion Getters
 	
 	public void handleGridSpaceClicks(MouseEvent event)
 	{
-		GridSpace clickedGridSpace = ((GridSpace) event.getSource());
-		System.out.println(clickedGridSpace.getyCoordinate() + ", " + clickedGridSpace.getxCoordinate());
+		Position clickedPosition = ((Position) event.getSource());
+		System.out.println(clickedPosition.getyCoordinate() + ", " + clickedPosition.getxCoordinate());
 	}// end handleGridSpaceClicks
 	
 	public void handleChipClicks(MouseEvent event)
 	{
 		Chip clickedChip = ((Chip) event.getSource());
 		System.out.println("I'm white chip");
+		clickedChip.setEffect(new DropShadow(10, 0f, 0d, Color.DEEPSKYBLUE));
 	}// end handleChipClicks
 }// end Game - class
