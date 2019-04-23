@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class Position extends Rectangle
 {
-	public static final double	GRIDSPACE_SIZE	= 100;
+	public static final double	POSITION_SIZE	= 100;
 	private Chip				chip;
 	private int					xCoordinate;
 	private int					yCoordinate;
@@ -29,8 +29,8 @@ public class Position extends Rectangle
 		this.xCoordinate	= x;
 		this.yCoordinate	= y;
 		
-		this.setWidth(GRIDSPACE_SIZE);
-		this.setHeight(GRIDSPACE_SIZE);
+		this.setWidth(POSITION_SIZE);
+		this.setHeight(POSITION_SIZE);
 		this.setFill(Color.TRANSPARENT); // If we set visible to false, then actions are not taken into account
 	}// end Position - constructor
 	
@@ -42,6 +42,13 @@ public class Position extends Rectangle
 	
 	public void setChip(Chip chip)
 	{
+		if (chip != null)
+		{
+			chip.setLayoutX(this.getLayoutX() + POSITION_SIZE / 2);
+			chip.setLayoutY(this.getLayoutY() + POSITION_SIZE / 2);
+			chip.setPosition(this);
+		}// end if
+		
 		this.chip = chip;
 	}// end setChip
 	

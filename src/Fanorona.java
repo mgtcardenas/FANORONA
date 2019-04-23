@@ -12,13 +12,16 @@ public class Fanorona extends Application
 	@Override
 	public void start(Stage primaryStage)
 	{
-		Board         board         = Board.instance();                  // Model
-		Player        player        = new Player();                      // Model
-		Player        aI            = new AI();                          // Model
-		GameInterface gameInterface = new GameInterface();                        // GameInterface
-		Game          game          = new Game(board, player, aI, gameInterface); // Controller
+		State			initialState;
+		GameInterface	gameInterface;
+		Game			controller;
 		
-		gameInterface.setEventHandlersAndActionListeners(game);
+		initialState	= new State();
+		gameInterface	= new GameInterface(); // GameInterface
+		controller		= new Game(initialState, gameInterface); // Controller
+		
+		gameInterface.setEventHandlersAndActionListeners(controller);
+		controller.updateInterface();
 		
 		primaryStage.setTitle("Fanorona");
 		primaryStage.setScene(new Scene(gameInterface, GameInterface.SCENE_WIDTH, GameInterface.SCENE_HEIGHT));

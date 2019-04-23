@@ -7,15 +7,10 @@ public class GameInterface extends AnchorPane
 	public static final double	SCENE_WIDTH		= 900;
 	public static final double	SCENE_HEIGHT	= 500;
 	
-	Board						board;
-	
 	Line[]						verticalLines;
 	Line[]						horizontalLines;
 	Line[]						longDiagonalLines;
 	Line[]						shortDiagonalLines;
-	
-	Chip[]						whiteChips;
-	Chip[]						blackChips;
 	
 	/**
 	 * It is not necessary to give the Board as arguments since it is a singleton, but the
@@ -23,7 +18,6 @@ public class GameInterface extends AnchorPane
 	 */
 	public GameInterface()
 	{
-		board = Board.instance();
 		buildComponents();
 	}// end GameInterface
 	
@@ -37,8 +31,8 @@ public class GameInterface extends AnchorPane
 		this.longDiagonalLines	= new Line[6];
 		this.shortDiagonalLines	= new Line[4];
 		
-		this.whiteChips			= new Chip[22];
-		this.blackChips			= new Chip[22];
+		// this.whiteChips = new Chip[22];
+		// this.blackChips = new Chip[22];
 		
 		drawVerticalLines(this.verticalLines);
 		drawHorizontalLines(this.horizontalLines);
@@ -49,36 +43,7 @@ public class GameInterface extends AnchorPane
 		displayLines(this.horizontalLines);
 		displayLines(this.longDiagonalLines);
 		displayLines(this.shortDiagonalLines);
-		
-		placeGridSpaces(this.board);
-		
-		drawWhiteChips(this.whiteChips);
-		drawBlackChips(this.blackChips);
-		
-		displayChips(this.whiteChips);
-		displayChips(this.blackChips);
 	}// end buildComponents
-	
-	/**
-	 * Puts all the GridSpaces that form part of the Board on the GameInterface in their correct coordinate
-	 *
-	 * @param board the game board
-	 */
-	private void placeGridSpaces(Board board)
-	{
-		Position position;
-		
-		for (int y = 0; y < board.getGrid().length; y++)
-		{
-			for (int x = 0; x < board.getGrid()[y].length; x++)
-			{
-				position = board.getGrid()[y][x];
-				position.setLayoutX(x * Position.GRIDSPACE_SIZE);
-				position.setLayoutY(y * Position.GRIDSPACE_SIZE);
-				getChildren().add(position);
-			}// end for - x
-		}// end for - y
-	}// end placeGridSpaces
 	
 	/**
 	 * Gives functionality to the visual elements by placing action listeners or event handlers
@@ -87,132 +52,15 @@ public class GameInterface extends AnchorPane
 	 */
 	public void setEventHandlersAndActionListeners(Game controller)
 	{
-		for (int y = 0; y < board.getGrid().length; y++) // Handle GridSpaces
-			for (int x = 0; x < board.getGrid()[y].length; x++)
-				board.getGrid()[y][x].setOnMouseClicked(controller::handleGridSpaceClicks);
+		for (int y = 0; y < controller.getCurrentState().getGrid().length; y++) // Handle GridSpaces
+			for (int x = 0; x < controller.getCurrentState().getGrid()[y].length; x++)
+				controller.getCurrentState().getGrid()[y][x].setOnMouseClicked(controller::handlePositionClicks);
 			
-		for (Chip c : this.whiteChips)
-			c.setOnMouseClicked(controller::handleChipClicks);
+		for (Position[] row : controller.getCurrentState().getGrid()) // Handle White Chips
+			for (Position p : row)
+				if (p.getChip() != null && p.getChip().getFill() == Color.WHITE)
+					p.getChip().setOnMouseClicked(controller::handleWhiteChipClicks);
 	}// end setEventHandlersAndActionListeners
-	
-	/**
-	 * Creates white chips with the correct coordinates on the GameInterface
-	 *
-	 * @param whiteChips the white chips that belong to the player
-	 */
-	private void drawWhiteChips(Chip[] whiteChips)
-	{
-		int x, y, i;
-		
-		x	= 50;
-		y	= 450;
-		
-		i	= 0;
-		while (i < 9)
-		{
-			whiteChips[i] = new Chip(Color.WHITE);
-			whiteChips[i].setLayoutX(x);
-			whiteChips[i].setLayoutY(y);
-			x += 100;
-			i++;
-		}// end while
-		
-		x	= 50;
-		y	= 350;
-		
-		while (i < 18)
-		{
-			whiteChips[i] = new Chip(Color.WHITE);
-			whiteChips[i].setLayoutX(x);
-			whiteChips[i].setLayoutY(y);
-			x += 100;
-			i++;
-		}// end while
-		
-		whiteChips[i] = new Chip(Color.WHITE);
-		whiteChips[i].setLayoutX(150);
-		whiteChips[i].setLayoutY(250);
-		i++;
-		
-		whiteChips[i] = new Chip(Color.WHITE);
-		whiteChips[i].setLayoutX(350);
-		whiteChips[i].setLayoutY(250);
-		i++;
-		
-		whiteChips[i] = new Chip(Color.WHITE);
-		whiteChips[i].setLayoutX(650);
-		whiteChips[i].setLayoutY(250);
-		i++;
-		
-		whiteChips[i] = new Chip(Color.WHITE);
-		whiteChips[i].setLayoutX(850);
-		whiteChips[i].setLayoutY(250);
-	}// end drawWhiteChips
-	
-	/**
-	 * Creates black chips with the correct coordinates no the GameInterface
-	 *
-	 * @param blackChips the black chips that belong to the A.I.
-	 */
-	private void drawBlackChips(Chip[] blackChips)
-	{
-		int x, y, i;
-		
-		x	= 50;
-		y	= 50;
-		
-		i	= 0;
-		while (i < 9)
-		{
-			blackChips[i] = new Chip(Color.BLACK);
-			blackChips[i].setLayoutX(x);
-			blackChips[i].setLayoutY(y);
-			x += 100;
-			i++;
-		}// end while
-		
-		x	= 50;
-		y	= 150;
-		
-		while (i < 18)
-		{
-			blackChips[i] = new Chip(Color.BLACK);
-			blackChips[i].setLayoutX(x);
-			blackChips[i].setLayoutY(y);
-			x += 100;
-			i++;
-		}// end while
-		
-		blackChips[i] = new Chip(Color.BLACK);
-		blackChips[i].setLayoutX(50);
-		blackChips[i].setLayoutY(250);
-		i++;
-		
-		blackChips[i] = new Chip(Color.BLACK);
-		blackChips[i].setLayoutX(250);
-		blackChips[i].setLayoutY(250);
-		i++;
-		
-		blackChips[i] = new Chip(Color.BLACK);
-		blackChips[i].setLayoutX(550);
-		blackChips[i].setLayoutY(250);
-		i++;
-		
-		blackChips[i] = new Chip(Color.BLACK);
-		blackChips[i].setLayoutX(750);
-		blackChips[i].setLayoutY(250);
-	}// end drawBlackChips
-	
-	/**
-	 * Add all the chips to the AnchorPane for each Chip Array
-	 *
-	 * @param chips the chips to be added
-	 */
-	private void displayChips(Chip[] chips)
-	{
-		for (Chip c : chips)
-			getChildren().add(c);
-	}// end displayChips
 	
 	/**
 	 * Creates vertical lines with the correct coordinates on the GameInterface
