@@ -14,7 +14,7 @@ public class State
 		{
 			for (int x = 0; x < grid[y].length; x++)
 			{
-				grid[y][x] = new Position(y, x);
+				grid[y][x] = new Position(y, x, ((y + x) % 2 == 0) ? "strong" : "weak");
 				grid[y][x].setLayoutX(x * Position.POSITION_SIZE);
 				grid[y][x].setLayoutY(y * Position.POSITION_SIZE);
 			}// end for - j

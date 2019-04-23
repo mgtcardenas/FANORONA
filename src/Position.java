@@ -16,18 +16,14 @@ public class Position extends Rectangle
 	private Chip				chip;
 	private int					xCoordinate;
 	private int					yCoordinate;
+	private String				type;
 	
-	/**
-	 * To create a Position it is only necessary to give the type and the coordinates on the Board
-	 *
-	 * @param y the row this chip is located at, counting from 0
-	 * @param x the column this chip is located at, counting from 0
-	 */
-	public Position(int y, int x)
+	public Position(int y, int x, String type)
 	{
 		this.chip			= null;
 		this.xCoordinate	= x;
 		this.yCoordinate	= y;
+		this.type			= type;
 		
 		this.setWidth(POSITION_SIZE);
 		this.setHeight(POSITION_SIZE);
@@ -61,5 +57,10 @@ public class Position extends Rectangle
 	{
 		return yCoordinate;
 	}// end getyCoordinate
+	
+	public String getType()
+	{
+		return type;
+	}// end getType
 		// endregion Getters & Setters
 }// end Position - class
