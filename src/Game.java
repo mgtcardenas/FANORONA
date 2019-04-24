@@ -13,6 +13,7 @@ public class Game
 	private boolean			userIsStillInTurn;
 	private Set<Position>	walkedPath;
 	private String			lastDirection;
+	private State			selectedState;
 	
 	public Game(State initialState, GameInterface gameInterface)
 	{
@@ -58,19 +59,28 @@ public class Game
 				userMovement.perform();
 				
 				if (userMovement.didCapture() && userMovement.hasNextPossibleCaptures()) // User keeps playing
-				{
 					userIsStillInTurn = true;
-				}// end if
-				else
+				else // Agent/Black Chip's Turn
 				{
 					walkedPath.clear();
 					deselectSelectedChip();
 					userIsStillInTurn = false;
-					// Black Chip's Turn
-				}
+					agentMoves();
+				}// end if - else
 			}// end if
 		}// end if
 	}// end handlePositionClicks
+	
+	private void agentMoves()
+	{
+		selectedState = MinMax.miniMaxEasy(currentState);
+		Movement agentMovement = new Movement(selectedState.getChip(), selectedState.getPosition(), this);
+		agentMovement.perform();
+		if (agentMovement.didCapture() && agentMovement.hasNextPossibleCaptures())
+			userIsStillInTurn = false;
+		else
+			userIsStillInTurn = true;
+	}// end agentMoves
 	
 	private void deselectSelectedChip()
 	{

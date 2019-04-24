@@ -2,14 +2,17 @@ import java.util.LinkedList;
 
 import javafx.scene.paint.Color;
 
-public class State
+public class State implements Comparable<State>
 {
 	private Position[][]		grid;
 	private LinkedList<State>	children;
+	private int					payoff;
+	private Chip				chip;
+	private Position			position;
 	
 	public State()
 	{
-		grid = new Position[5][9];
+		this.grid = new Position[5][9];
 		for (int y = 0; y < grid.length; y++) // Set the Positions in place
 		{
 			for (int x = 0; x < grid[y].length; x++)
@@ -22,6 +25,9 @@ public class State
 		
 		setInitialWhiteChips();
 		setInitialBlackChips();
+		
+		this.chip		= null;
+		this.position	= null;
 	}// end State - constructor
 	
 	// region Getters
@@ -30,10 +36,25 @@ public class State
 		return grid;
 	}// end getGrid
 	
-	public LinkedList<State> getChildren()
+	public LinkedList<State> getChildren() // aka Expansion
 	{
 		return children;
 	}// end getChildren
+	
+	public int getPayoff()
+	{
+		return payoff;
+	}// end getPayoff
+	
+	public Chip getChip()
+	{
+		return chip;
+	}// end getChip
+	
+	public Position getPosition()
+	{
+		return position;
+	}// end getPosition
 		// endregion Getters
 	
 	private void setInitialWhiteChips()
@@ -59,4 +80,17 @@ public class State
 		grid[2][5].setChip(new Chip(Color.BLACK));
 		grid[2][7].setChip(new Chip(Color.BLACK));
 	}// end setInitialBlackChips
+	
+	@Override
+	public int compareTo(State otherState)
+	{
+		int result = 0;
+		
+		if (this.payoff > otherState.payoff)
+			result = 1;
+		if (this.payoff < otherState.payoff)
+			result = -1;
+		
+		return result;
+	}// end compareTo
 }// end State - class
