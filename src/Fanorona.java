@@ -21,7 +21,7 @@ public class Fanorona extends Application
 		controller		= new Game(initialState, gameInterface); // Controller
 		
 		gameInterface.setEventHandlersAndActionListeners(controller);
-		controller.updateInterface();
+		controller.initializeInterface();
 		
 		primaryStage.setTitle("Fanorona");
 		primaryStage.setScene(new Scene(gameInterface, GameInterface.SCENE_WIDTH, GameInterface.SCENE_HEIGHT));

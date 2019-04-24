@@ -25,7 +25,7 @@ public class Game implements ActionListener
 			aButton.setLabel("O");
 		else
 			aButton.setLabel("X");
-	}// end updateInterface
+	}// end initializeInterface
 	
 	private void updateState(String player, Button aButton)
 	{
