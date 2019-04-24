@@ -16,8 +16,8 @@ public class Movement
 		this.destinationPos		= destinationPos;
 		this.game				= game;
 		this.deletionColor		= chip.getFill() == Color.WHITE ? Color.BLACK : Color.WHITE;
-		this.direction			= getDirection();
-		this.oppositeDirection	= getOppositeDirection();
+		this.direction			= getDirection(chip.getPosition(), destinationPos);
+		this.oppositeDirection	= getDirection(destinationPos, chip.getPosition());
 	}// end Movement - constructor
 	
 	public void perform()
@@ -50,122 +50,27 @@ public class Movement
 	
 	private boolean removeInDirection(boolean inOppositeDirection)
 	{
-		int			x				= inOppositeDirection ? chip.getPosition().getxCoordinate() : destinationPos.getxCoordinate();
-		int			y				= inOppositeDirection ? chip.getPosition().getyCoordinate() : destinationPos.getyCoordinate();
-		State		currentState	= game.getCurrentState();
-		
-		Position	removalPosition;
+		int	x	= inOppositeDirection ? chip.getPosition().getxCoordinate() : destinationPos.getxCoordinate();
+		int	y	= inOppositeDirection ? chip.getPosition().getyCoordinate() : destinationPos.getyCoordinate();
 		
 		switch (inOppositeDirection ? oppositeDirection : direction)
 		{
 			case "up":
-				y--; // We are sure that this position has a black chip
-				
-				while (y != -1)
-				{
-					removalPosition = currentState.getGrid()[y--][x];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, -1, 0);
 			case "up-right":
-				y--; // We are sure that this position has a black chip
-				x++; // We are sure that this position has a black chip
-				
-				while (y != -1 && x != 9)
-				{
-					removalPosition = currentState.getGrid()[y--][x++];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, -1, +1);
 			case "right":
-				x++; // We are sure that this position has a black chip
-				
-				while (x != 9)
-				{
-					removalPosition = currentState.getGrid()[y][x++];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, 0, +1);
 			case "down-right":
-				y++; // We are sure that this position has a black chip
-				x++; // We are sure that this position has a black chip
-				
-				while (y != 5 && x != 9)
-				{
-					removalPosition = currentState.getGrid()[y++][x++];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, +1, +1);
 			case "down":
-				y++; // We are sure that this position has a black chip
-				
-				while (y != 5)
-				{
-					removalPosition = currentState.getGrid()[y++][x];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, +1, 0);
 			case "down-left":
-				y++; // We are sure that this position has a black chip
-				x--; // We are sure that this position has a black chip
-				
-				while (y != 5 && x != -1)
-				{
-					removalPosition = currentState.getGrid()[y++][x--];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, +1, -1);
 			case "left":
-				x--; // We are sure that this position has a black chip
-				
-				while (x != -1)
-				{
-					removalPosition = currentState.getGrid()[y][x--];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, 0, -1);
 			case "up-left":
-				y--; // We are sure that this position has a black chip
-				x--; // We are sure that this position has a black chip
-				
-				while (y != -1 && x != -1)
-				{
-					removalPosition = currentState.getGrid()[y--][x--];
-					if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
-						remove(removalPosition.getChip());
-					else
-						break;
-				}// end while
-				return true;
-			
+				return removeIncrementally(y, x, -1, -1);
 			default:
 				System.out.println("Something is wrong");
 				break;
@@ -173,6 +78,28 @@ public class Movement
 		
 		return false;
 	}// end removeInDirection
+	
+	private boolean removeIncrementally(int y, int x, int yIncrement, int xIncrement)
+	{
+		y	+= yIncrement;
+		x	+= xIncrement;
+		State		currentState	= game.getCurrentState();
+		
+		Position	removalPosition;
+		
+		while (y >= 0 && y <= 4 && x >= 0 && x <= 8)
+		{
+			removalPosition = currentState.getGrid()[y][x];
+			if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
+				remove(removalPosition.getChip());
+			else
+				break;
+			y	+= yIncrement;
+			x	+= xIncrement;
+		}// end while
+		
+		return true;
+	}// end removeIncrementally
 	
 	private boolean hasOppositeColorInAdjacentDirection(boolean inOppositeDirection)
 	{
@@ -296,59 +223,30 @@ public class Movement
 		return Math.abs(chipX - posX) == 1 && Math.abs(chipY - posY) == 1;
 	}// end isAdjacent
 	
-	private String getDirection()
+	private String getDirection(Position origin, Position destination)
 	{
-		int	chipX	= chip.getPosition().getxCoordinate();
-		int	chipY	= chip.getPosition().getyCoordinate();
-		int	posX	= destinationPos.getxCoordinate();
-		int	posY	= destinationPos.getyCoordinate();
+		int	origX	= origin.getxCoordinate();
+		int	origY	= origin.getyCoordinate();
+		int	destX	= destination.getxCoordinate();
+		int	destY	= destination.getyCoordinate();
 		
-		if (posX == chipX && posY == chipY - 1)
+		if (destX == origX && destY == origY - 1)
 			return "up";
-		if (posX == chipX + 1 && posY == chipY - 1)
+		if (destX == origX + 1 && destY == origY - 1)
 			return "up-right";
-		if (posX == chipX + 1 && posY == chipY)
+		if (destX == origX + 1 && destY == origY)
 			return "right";
-		if (posX == chipX + 1 && posY == chipY + 1)
+		if (destX == origX + 1 && destY == origY + 1)
 			return "down-right";
-		if (posX == chipX && posY == chipY + 1)
+		if (destX == origX && destY == origY + 1)
 			return "down";
-		if (posX == chipX - 1 && posY == chipY + 1)
+		if (destX == origX - 1 && destY == origY + 1)
 			return "down-left";
-		if (posX == chipX - 1 && posY == chipY)
+		if (destX == origX - 1 && destY == origY)
 			return "left";
-		if (posX == chipX - 1 && posY == chipY - 1)
+		if (destX == origX - 1 && destY == origY - 1)
 			return "up-left";
 		
 		return "";
 	}// end getDirection
-	
-	private String getOppositeDirection()
-	{
-		switch (this.direction)
-		{
-			case "up":
-				return "down";
-			case "up-right":
-				return "down-left";
-			case "right":
-				return "left";
-			case "down-right":
-				return "up-left";
-			case "down":
-				return "up";
-			case "down-left":
-				return "up-right";
-			case "left":
-				return "right";
-			case "up-left":
-				return "down-right";
-			default:
-				System.out.println("Something is wrong");
-				break;
-		}// end switch
-		
-		return "";
-	}// end getOppositeDirection
-	
 }// end Movement - class
