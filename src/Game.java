@@ -12,6 +12,7 @@ public class Game
 	private Chip			selectedChip;
 	private boolean			userIsStillInTurn;
 	private Set<Position>	walkedPath;
+	private String			lastDirection;
 	
 	public Game(State initialState, GameInterface gameInterface)
 	{
@@ -31,6 +32,16 @@ public class Game
 		return gameInterface;
 	}// end getGameInterface
 	
+	public Set<Position> getWalkedPath()
+	{
+		return walkedPath;
+	}// end getWalkedPath
+	
+	public String getLastDirection()
+	{
+		return lastDirection;
+	}// end getLastDirection
+	
 	public void handlePositionClicks(MouseEvent event)
 	{
 		Position clickedPosition = ((Position) event.getSource());
@@ -43,11 +54,11 @@ public class Game
 			if (userMovement.isValid())
 			{
 				walkedPath.add(selectedChip.getPosition());
+				lastDirection = userMovement.getDirection();
 				userMovement.perform();
 				
-				if (userMovement.captured && hasNextPossibleCaptures(selectedChip))
+				if (userMovement.didCapture() && userMovement.hasNextPossibleCaptures()) // User keeps playing
 				{
-					// User keeps playing
 					userIsStillInTurn = true;
 				}// end if
 				else
@@ -60,59 +71,6 @@ public class Game
 			}// end if
 		}// end if
 	}// end handlePositionClicks
-	
-	private boolean hasNextPossibleCaptures(Chip chip)
-	{
-		// int x = chip.getPosition().getxCoordinate();
-		// int y = chip.getPosition().getyCoordinate();
-		// Color oppositeColor = chip.getFill() == Color.WHITE ? Color.BLACK : Color.WHITE;
-		// List<String> directions = new LinkedList<>();
-		//
-		// // TODO: También, qué pasa si te quedaste adyacente a una ficha y te puedes mover en direccion contraria cuando esa dirección no está en el walkedPath
-		//
-		// for (int posY = y - 2; posY <= y + 2; posY += 2)
-		// {
-		// for (int posX = x - 2; posX <= x + 2; posX += 2)
-		// {
-		// if (y >= 0 && y <= 4 && x >= 0 && x <= 8 && currentState.getGrid()[y][x].getChip() != null)
-		// if (currentState.getGrid()[y][x].getChip().getFill() == oppositeColor)
-		// directions.add(getDirection(chip, currentState.getGrid()[y][x]));
-		// }// end for - posX
-		// }// end for - posY
-		
-		/*
-		 * Para cada direccion, si no hay
-		 */
-		
-		return true;
-	}// end hasNextPossibleCaptures
-	
-	private String getDirection(Chip chip, Position position)
-	{
-		int	chipX	= chip.getPosition().getxCoordinate();
-		int	chipY	= chip.getPosition().getyCoordinate();
-		int	posX	= position.getxCoordinate();
-		int	posY	= position.getyCoordinate();
-		
-		if (posX == chipX && posY == chipY - 1)
-			return "up";
-		if (posX == chipX + 1 && posY == chipY - 1)
-			return "up-right";
-		if (posX == chipX + 1 && posY == chipY)
-			return "right";
-		if (posX == chipX + 1 && posY == chipY + 1)
-			return "down-right";
-		if (posX == chipX && posY == chipY + 1)
-			return "down";
-		if (posX == chipX - 1 && posY == chipY + 1)
-			return "down-left";
-		if (posX == chipX - 1 && posY == chipY)
-			return "left";
-		if (posX == chipX - 1 && posY == chipY - 1)
-			return "up-left";
-		
-		return "";
-	}// end getDirection
 	
 	private void deselectSelectedChip()
 	{

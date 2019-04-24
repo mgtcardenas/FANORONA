@@ -1,14 +1,17 @@
+import java.util.LinkedList;
+import java.util.List;
+
 import javafx.scene.paint.Color;
 
 public class Movement
 {
-	Game		game;
-	Chip		chip;
-	Position	destinationPos;
-	Color		deletionColor;
-	String		direction;
-	String		oppositeDirection;
-	boolean		captured;
+	private Game		game;
+	private Chip		chip;
+	private Position	destinationPos;
+	private Color		deletionColor;
+	private String		direction;
+	private String		oppositeDirection;
+	private boolean		captured;
 	
 	public Movement(Chip chip, Position destinationPos, Game game)
 	{
@@ -19,6 +22,108 @@ public class Movement
 		this.direction			= getDirection(chip.getPosition(), destinationPos);
 		this.oppositeDirection	= getDirection(destinationPos, chip.getPosition());
 	}// end Movement - constructor
+	
+	public String getDirection()
+	{
+		return direction;
+	}// end getDirection
+	
+	public boolean didCapture()
+	{
+		return captured;
+	}// end didCapture
+	
+	public boolean hasNextPossibleCaptures()
+	{
+		if (hasApproachCapture())
+			return true;
+		
+		if (hasWithdrawalCapture())
+			return true;
+		
+		return false;
+	}// end hasNextPossibleCaptures
+	
+	private void removeConsecutiveDirection(List<Position> possiblePositions)
+	{
+		for (int i = possiblePositions.size() - 1; i >= 0; i--)
+		{
+			String direction = getDirection(chip.getPosition(), possiblePositions.get(i));
+			if (direction.equals(game.getLastDirection()))
+				possiblePositions.remove(i);
+		}// end foreach
+	}// end removeConsecutiveDirection
+	
+	private boolean hasApproachCapture()
+	{
+		int				chipX				= chip.getPosition().getxCoordinate();
+		int				chipY				= chip.getPosition().getyCoordinate();
+		State			currentState		= game.getCurrentState();
+		List<Position>	possiblePositions	= new LinkedList<>();
+		
+		for (int posY = chipY - 2; posY <= chipY + 2; posY += 2) // Check for all of opponent's chips on outer square of chip
+			for (int posX = chipX - 2; posX <= chipX + 2; posX += 2)
+				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.getGrid()[posY][posX].getChip() != null)
+					if (currentState.getGrid()[posY][posX].getChip().getFill() == deletionColor)
+						possiblePositions.add(currentState.getGrid()[chipY + (posY - chipY) / 2][chipX + (posX - chipX) / 2]);
+					
+		possiblePositions.removeAll(game.getWalkedPath()); // You can't go back to a previous position
+		removeConsecutiveDirection(possiblePositions); // It is not permitted to move twice consecutively in the same direction
+		
+		if (chip.getPosition().getType().equals("weak"))
+		{
+			for (Position position : possiblePositions)
+			{
+				if (Math.abs(position.getxCoordinate() - chipX) == 1 && position.getyCoordinate() == chipY && position.getChip() == null)
+					return true;
+				if (Math.abs(position.getyCoordinate() - chipY) == 1 && position.getxCoordinate() == chipX && position.getChip() == null)
+					return true;
+			}// end forearch
+		}
+		else
+		{
+			for (Position position : possiblePositions)
+				if (position.getChip() == null)
+					return true;
+		}// end if - else
+		
+		return false;
+	}// end hasApproachCapture
+	
+	private boolean hasWithdrawalCapture()
+	{
+		int				chipX				= chip.getPosition().getxCoordinate();
+		int				chipY				= chip.getPosition().getyCoordinate();
+		State			currentState		= game.getCurrentState();
+		List<Position>	possiblePositions	= new LinkedList<>();
+		
+		for (int posY = chipY - 1; posY <= chipY + 1; posY++) // Check for all of opponent's chips on outer square of chip
+			for (int posX = chipX - 1; posX <= chipX + 1; posX++)
+				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.getGrid()[posY][posX].getChip() != null)
+					if (currentState.getGrid()[posY][posX].getChip().getFill() == deletionColor)
+						possiblePositions.add(currentState.getGrid()[chipY + (posY - chipY) * -1][chipX + (posX - chipX) * -1]);
+					
+		possiblePositions.removeAll(game.getWalkedPath()); // You can't go back to a previous position
+		
+		if (chip.getPosition().getType().equals("weak"))
+		{
+			for (Position position : possiblePositions)
+			{
+				if (Math.abs(position.getxCoordinate() - chipX) == 1 && position.getyCoordinate() == chipY && position.getChip() == null)
+					return true;
+				if (Math.abs(position.getyCoordinate() - chipY) == 1 && position.getxCoordinate() == chipX && position.getChip() == null)
+					return true;
+			}// end forearch
+		}
+		else
+		{
+			for (Position position : possiblePositions)
+				if (position.getChip() == null)
+					return true;
+		}// end if - else
+		
+		return false;
+	}// end hasWithdrawalCapture
 	
 	public void perform()
 	{
