@@ -1,14 +1,15 @@
+import java.io.*;
 import java.util.LinkedList;
 
 import javafx.scene.paint.Color;
 
-public class State implements Comparable<State>
+public class State implements Comparable<State>, Serializable
 {
-	private Position[][]		grid;
-	private LinkedList<State>	children;
-	private int					payoff;
-	private Chip				chip;
-	private Position			position;
+	private Position[][]      grid;
+	private LinkedList<State> children;
+	private int               payoff;
+	private Chip              chip;
+	private Position          position;
 	
 	public State()
 	{
@@ -26,11 +27,11 @@ public class State implements Comparable<State>
 		setInitialWhiteChips();
 		setInitialBlackChips();
 		
-		this.chip		= null;
-		this.position	= null;
+		this.chip = null;
+		this.position = null;
 	}// end State - constructor
 	
-	// region Getters
+	// region Getters & Setters
 	public Position[][] getGrid()
 	{
 		return grid;
@@ -51,18 +52,28 @@ public class State implements Comparable<State>
 		return chip;
 	}// end getChip
 	
+	public void setChip(Chip chip)
+	{
+		this.chip = chip;
+	}// end setChip
+	
 	public Position getPosition()
 	{
 		return position;
 	}// end getPosition
-		// endregion Getters
+	
+	public void setPosition(Position position)
+	{
+		this.position = position;
+	}// end setPosition
+	// endregion Getters & Setters
 	
 	private void setInitialWhiteChips()
 	{
 		for (int y = 3; y <= 4; y++)
 			for (int x = 0; x < grid[y].length; x++)
 				grid[y][x].setChip(new Chip(Color.WHITE));
-			
+		
 		grid[2][1].setChip(new Chip(Color.WHITE));
 		grid[2][3].setChip(new Chip(Color.WHITE));
 		grid[2][6].setChip(new Chip(Color.WHITE));
@@ -74,12 +85,27 @@ public class State implements Comparable<State>
 		for (int y = 0; y <= 1; y++)
 			for (int x = 0; x < grid[y].length; x++)
 				grid[y][x].setChip(new Chip(Color.BLACK));
-			
+		
 		grid[2][0].setChip(new Chip(Color.BLACK));
 		grid[2][2].setChip(new Chip(Color.BLACK));
 		grid[2][5].setChip(new Chip(Color.BLACK));
 		grid[2][7].setChip(new Chip(Color.BLACK));
 	}// end setInitialBlackChips
+	
+	public LinkedList<Movement> getPossibleMovements(boolean agentMovements)
+	{
+		return null;
+	}// end getPossibleMovements
+	
+	public void expansion(boolean agentMoves)
+	{
+		
+	}// end expansion
+	
+	public void payOffFuction()
+	{
+	
+	}// end payOffFuction
 	
 	@Override
 	public int compareTo(State otherState)
@@ -93,4 +119,22 @@ public class State implements Comparable<State>
 		
 		return result;
 	}// end compareTo
+	
+	public static State deepClone(State object)
+	{
+		try
+		{
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream    oos  = new ObjectOutputStream(baos);
+			oos.writeObject(object);
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			ObjectInputStream    ois  = new ObjectInputStream(bais);
+			return (State) ois.readObject();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}// end try - catch
+	}// end deepClone
 }// end State - class

@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class Chip extends Circle
+public class Chip extends Circle implements Serializable
 {
 	public static final double	RADIUS	= 25; // for the view
 	private Position			position;

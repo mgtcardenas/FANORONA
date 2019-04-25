@@ -1,16 +1,9 @@
+import java.io.Serializable;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-/**
- * @author Marco Cárdenas
- *
- *         A class that represents each individual space/box on the board.
- *         Each gridspace is of a particular type and has a multiplier.
- *         It may also have a Chip associated to it and is represented
- *         as a StackPane with a rectangle that varies in color depending
- *         on the type attribute
- */
-public class Position extends Rectangle
+public class Position extends Rectangle implements Serializable
 {
 	public static final double	POSITION_SIZE	= 100;
 	private Chip				chip;
