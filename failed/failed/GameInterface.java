@@ -1,3 +1,5 @@
+package failed;
+
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -44,24 +46,24 @@ public class GameInterface extends AnchorPane
 		displayLines(this.longDiagonalLines);
 		displayLines(this.shortDiagonalLines);
 	}// end buildComponents
-//
-//	/**
-//	 * Gives functionality to the visual elements by placing action listeners or event handlers
-//	 *
-//	 * @param controller a Game of Scrabble
-//	 */
-//	public void setEventHandlersAndActionListeners(Game controller)
-//	{
-//		for (int y = 0; y < controller.getCurrentState().getGrid().length; y++) // Handle GridSpaces
-//			for (int x = 0; x < controller.getCurrentState().getGrid()[y].length; x++)
-//				controller.getCurrentState().getGrid()[y][x].setOnMouseClicked(controller::handlePositionClicks);
-//
-//		for (Position[] x : controller.getCurrentState().getGrid()) // Handle White Chips
-//			for (Position p : x)
-//				if (p.getChip() != null && p.getChip().getFill() == Color.WHITE)
-//					p.getChip().setOnMouseClicked(controller::handleWhiteChipClicks);
-//	}// end setEventHandlersAndActionListeners
-//
+	
+	/**
+	 * Gives functionality to the visual elements by placing action listeners or event handlers
+	 *
+	 * @param controller a Game of Scrabble
+	 */
+	public void setEventHandlersAndActionListeners(Game controller)
+	{
+		for (int y = 0; y < controller.getCurrentState().getGrid().length; y++) // Handle GridSpaces
+			for (int x = 0; x < controller.getCurrentState().getGrid()[y].length; x++)
+				controller.getCurrentState().getGrid()[y][x].setOnMouseClicked(controller::handlePositionClicks);
+			
+		for (Position[] row : controller.getCurrentState().getGrid()) // Handle White Chips
+			for (Position p : row)
+				if (p.getChip() != null && p.getChip().getFill() == Color.WHITE)
+					p.getChip().setOnMouseClicked(controller::handleWhiteChipClicks);
+	}// end setEventHandlersAndActionListeners
+	
 	/**
 	 * Creates vertical lines with the correct coordinates on the GameInterface
 	 *

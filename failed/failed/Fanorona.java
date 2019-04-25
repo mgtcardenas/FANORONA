@@ -1,3 +1,5 @@
+package failed;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -20,8 +22,8 @@ public class Fanorona extends Application
 		gameInterface	= new GameInterface(); // GameInterface
 		controller		= new Game(initialState, gameInterface); // Controller
 		
-		// gameInterface.setEventHandlersAndActionListeners(controller);
-		controller.updateInterface(true);
+		gameInterface.setEventHandlersAndActionListeners(controller);
+		controller.initializeInterface();
 		
 		primaryStage.setTitle("Fanorona");
 		primaryStage.setScene(new Scene(gameInterface, GameInterface.SCENE_WIDTH, GameInterface.SCENE_HEIGHT));

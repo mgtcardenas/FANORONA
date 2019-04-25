@@ -1,3 +1,5 @@
+package failed;
+
 import java.io.Serializable;
 
 import javafx.scene.paint.Color;

@@ -8,12 +8,12 @@ import javafx.scene.paint.Color;
 
 public class Game implements Serializable
 {
-	private State					currentState;
-	private transient GameInterface	gameInterface;
-	private Chip					selectedChip;
-	private boolean					userTurn;
-	private Set<Position>			walkedPath;
-	private String					lastDirection;
+	State			currentState;
+	GameInterface	gameInterface;
+	Chip			selectedChip;
+	boolean			userTurn;
+	Set<Movement>	walkedPath;
+	String			lastDirection;
 	
 	public Game(State initialState, GameInterface gameInterface)
 	{
@@ -21,68 +21,13 @@ public class Game implements Serializable
 		this.gameInterface	= gameInterface;
 		this.walkedPath		= new HashSet<>();
 		this.userTurn		= false;
-		
-		initialState.setGame(this);
 	}// end Game - constructor
 	
-	public State getCurrentState()
+	public void handleSpaceClicks(MouseEvent event)
 	{
-		return currentState;
-	}// end getCurrentState
-	
-	public GameInterface getGameInterface()
-	{
-		return gameInterface;
-	}// end getGameInterface
-	
-	public Set<Position> getWalkedPath()
-	{
-		return walkedPath;
-	}// end getWalkedPath
-	
-	public String getLastDirection()
-	{
-		return lastDirection;
-	}// end getLastDirection
-	
-	public void handlePositionClicks(MouseEvent event)
-	{
-		Position clickedPosition = ((Position) event.getSource());
-		System.out.println(clickedPosition.getyCoordinate() + ", " + clickedPosition.getxCoordinate());
-		
-		if (selectedChip != null && !walkedPath.contains(clickedPosition))
-		{
-			Movement userMovement = new Movement(selectedChip, clickedPosition, this);
-			
-			if (userMovement.isValid())
-			{
-				walkedPath.add(selectedChip.getPosition());
-				lastDirection = userMovement.getDirection();
-				userMovement.perform();
-				
-				if (userMovement.didCapture() && userMovement.hasNextPossibleCaptures()) // User keeps playing
-					userTurn = true;
-				else // Agent/Black Chip's Turn
-				{
-					walkedPath.clear();
-					deselectSelectedChip();
-					userTurn = false;
-					// agentMoves();
-				}// end if - else
-			}// end if
-		}// end if
-	}// end handlePositionClicks
-	
-	private void agentMoves()
-	{
-		State		selectedState	= MinMax.miniMaxEasy(currentState);
-		Movement	agentMovement	= new Movement(selectedState.getChip(), selectedState.getPosition(), this);
-		agentMovement.perform();
-		if (agentMovement.didCapture() && agentMovement.hasNextPossibleCaptures())
-			agentMoves(); // recursively keep playing
-			
-		userTurn = true;
-	}// end agentMoves
+		Chip clickedSpace = ((Chip) event.getSource());
+		System.out.println(clickedSpace.y + ", " + clickedSpace.x);
+	}// end handleSpaceClicks
 	
 	private void deselectSelectedChip()
 	{
@@ -106,16 +51,37 @@ public class Game implements Serializable
 		}// end if
 	}// end handleWhiteChipClicks
 	
-	public void initializeInterface()
+	public void updateInterface(boolean firstTime)
 	{
-		for (Position[] row : currentState.getGrid())
+		if (!firstTime) // remove the previous Chips
+			gameInterface.getChildren().remove(gameInterface.getChildren().size() - 1);
+		
+		for (int y = 0; y < currentState.grid.length; y++) // Set the Positions in place
 		{
-			for (Position p : row)
+			for (int x = 0; x < currentState.grid[y].length; x++)
 			{
-				gameInterface.getChildren().add(p);
-				if (p.getChip() != null)
-					gameInterface.getChildren().add(p.getChip());
-			}// end foreach
-		}// end foreach
-	}// end initializeInterface
+				Chip chip = new Chip(y, x);
+				
+				switch (currentState.grid[y][x])
+				{
+					case 'O':
+						chip.setStroke(Color.BLACK);
+						chip.setFill(Color.BLACK);
+						gameInterface.getChildren().add(chip);
+						break;
+					case 'X':
+						chip.setStroke(Color.BLACK);
+						chip.setFill(Color.WHITE);
+						chip.setOnMouseClicked(this::handleWhiteChipClicks);
+						gameInterface.getChildren().add(chip);
+						break;
+					default:
+						chip.setFill(Color.TRANSPARENT);
+						chip.setOnMouseClicked(this::handleSpaceClicks);
+						gameInterface.getChildren();
+						break;
+				}// end switch currentState.grid[y][x]
+			}// end for x
+		}// end for - i
+	}// end updateInterface
 }// end Game - class
