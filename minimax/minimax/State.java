@@ -77,7 +77,7 @@ public class State implements Comparable
 		i				= 0;
 		while (i < possibleMoves.size())
 		{
-			child	= new State();
+			child	= new State(); // begin cloning state
 			row		= 0;
 			while (row < 3)
 			{
@@ -88,7 +88,7 @@ public class State implements Comparable
 					column					= column + 1;
 				}// end while
 				row = row + 1;
-			}// end while
+			}// end while; end cloning state
 			position									= possibleMoves.get(i);
 			child.grid[position.row][position.column]	= symbol;
 			child.row									= position.row;
@@ -108,6 +108,7 @@ public class State implements Comparable
 		expansion('O');
 	}// end expansionUserMoves
 	
+	// region State Analysis Functions
 	public boolean diagonalWin(char symbol)
 	{
 		boolean		isDiagonal;
@@ -215,6 +216,7 @@ public class State implements Comparable
 		// end if
 		return isAlmostLeftDiagonal;
 	}// end almostLeftDiagonalWin
+		// endregion State Analysis Functions
 	
 	public void payOffFunction()
 	{

@@ -33,6 +33,16 @@ public class Movement
 		return captured;
 	}// end didCapture
 	
+	public Chip getChip()
+	{
+		return chip;
+	}// end getChip
+	
+	public Position getDestinationPos()
+	{
+		return destinationPos;
+	}// end getDestinationPos
+	
 	public boolean hasNextPossibleCaptures()
 	{
 		if (hasApproachCapture())

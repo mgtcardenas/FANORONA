@@ -1,15 +1,18 @@
 import java.io.*;
 import java.util.LinkedList;
+import java.util.List;
 
 import javafx.scene.paint.Color;
 
 public class State implements Comparable<State>, Serializable
 {
-	private Position[][]      grid;
-	private LinkedList<State> children;
-	private int               payoff;
-	private Chip              chip;
-	private Position          position;
+	private Position[][]		grid;
+	private LinkedList<State>	children;
+	private int					payoff;
+	private Chip				chip;         // The chip to make the next best move for the agent
+	private Position			position;     // The position to put the chip for the next best move for the agent
+	private Movement			movement; // For the PayOffFunction to know if the movement has nextPossibleCaptures
+	private Game				game;
 	
 	public State()
 	{
@@ -27,17 +30,22 @@ public class State implements Comparable<State>, Serializable
 		setInitialWhiteChips();
 		setInitialBlackChips();
 		
-		this.chip = null;
-		this.position = null;
+		this.chip		= null;
+		this.position	= null;
 	}// end State - constructor
 	
 	// region Getters & Setters
+	public void setGame(Game game)
+	{
+		this.game = game;
+	}// end setGame
+	
 	public Position[][] getGrid()
 	{
 		return grid;
 	}// end getGrid
 	
-	public LinkedList<State> getChildren() // aka Expansion
+	public LinkedList<State> getChildren()
 	{
 		return children;
 	}// end getChildren
@@ -46,6 +54,11 @@ public class State implements Comparable<State>, Serializable
 	{
 		return payoff;
 	}// end getPayoff
+	
+	public void setPayoff(int payoff)
+	{
+		this.payoff = payoff;
+	}// end setPayoff
 	
 	public Chip getChip()
 	{
@@ -66,46 +79,97 @@ public class State implements Comparable<State>, Serializable
 	{
 		this.position = position;
 	}// end setPosition
-	// endregion Getters & Setters
-	
-	private void setInitialWhiteChips()
-	{
-		for (int y = 3; y <= 4; y++)
-			for (int x = 0; x < grid[y].length; x++)
-				grid[y][x].setChip(new Chip(Color.WHITE));
-		
-		grid[2][1].setChip(new Chip(Color.WHITE));
-		grid[2][3].setChip(new Chip(Color.WHITE));
-		grid[2][6].setChip(new Chip(Color.WHITE));
-		grid[2][8].setChip(new Chip(Color.WHITE));
-	}// end setInitialWhiteChips
+		// endregion Getters & Setters
 	
 	private void setInitialBlackChips()
 	{
 		for (int y = 0; y <= 1; y++)
 			for (int x = 0; x < grid[y].length; x++)
 				grid[y][x].setChip(new Chip(Color.BLACK));
-		
+			
 		grid[2][0].setChip(new Chip(Color.BLACK));
 		grid[2][2].setChip(new Chip(Color.BLACK));
 		grid[2][5].setChip(new Chip(Color.BLACK));
 		grid[2][7].setChip(new Chip(Color.BLACK));
 	}// end setInitialBlackChips
 	
+	private void setInitialWhiteChips()
+	{
+		for (int y = 3; y <= 4; y++)
+			for (int x = 0; x < grid[y].length; x++)
+				grid[y][x].setChip(new Chip(Color.WHITE));
+			
+		grid[2][1].setChip(new Chip(Color.WHITE));
+		grid[2][3].setChip(new Chip(Color.WHITE));
+		grid[2][6].setChip(new Chip(Color.WHITE));
+		grid[2][8].setChip(new Chip(Color.WHITE));
+	}// end setInitialWhiteChips
+	
 	public LinkedList<Movement> getPossibleMovements(boolean agentMovements)
 	{
-		return null;
+		LinkedList<Movement>	possibleMovements;
+		Color					color;
+		
+		color				= agentMovements ? Color.BLACK : Color.WHITE;
+		possibleMovements	= new LinkedList<>();
+		
+		for (int y = 0; y < grid.length; y++) // Set the Positions in place
+			for (int x = 0; x < grid[y].length; x++)
+				if (grid[y][x].getChip() != null && grid[y][x].getChip().getFill() == color)
+					possibleMovements.addAll(getMovements(grid[y][x].getChip()));
+				
+		return possibleMovements;
 	}// end getPossibleMovements
+	
+	private List<Movement> getMovements(Chip chip)
+	{
+		LinkedList<Movement>	movements	= new LinkedList<>();
+		int						chipX		= chip.getPosition().getxCoordinate();
+		int						chipY		= chip.getPosition().getyCoordinate();
+		
+		for (int posY = chipY - 1; posY <= chipY + 1; posY++) // Check all adjacent positions
+			for (int posX = chipX - 1; posX <= chipX + 1; posX++)
+				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && grid[posY][posX].getChip() == null)
+					movements.add(new Movement(chip, grid[posY][posX], game));
+				
+		return movements;
+	}// end getMovements
 	
 	public void expansion(boolean agentMoves)
 	{
+		State					child;
+		LinkedList<Movement>	possibleMovements;
 		
+		this.children		= new LinkedList<>();
+		possibleMovements	= getPossibleMovements(agentMoves);
+		
+		for (Movement possibleMovement : possibleMovements)
+		{
+			child = deepClone(this); // with this deep clone even the game object of this state
+			child.setChip(possibleMovement.getChip());
+			child.setPosition(possibleMovement.getDestinationPos());
+			child.performMovement();
+			this.children.add(child);
+		}// end foreach
 	}// end expansion
 	
-	public void payOffFuction()
+	private void performMovement()
 	{
+		this.movement = new Movement(this.chip, this.position, this.game);
+		this.movement.perform();
+	}// end performMovement
 	
-	}// end payOffFuction
+	public void payOffFunction()
+	{
+		int utility = 0;
+		
+		if (this.movement.didCapture() && this.movement.hasNextPossibleCaptures())
+			utility += 4;
+		else if (this.movement.didCapture())
+			utility += 2;
+		
+		this.payoff = utility;
+	}// end payOffFunction
 	
 	@Override
 	public int compareTo(State otherState)
@@ -124,11 +188,11 @@ public class State implements Comparable<State>, Serializable
 	{
 		try
 		{
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream    oos  = new ObjectOutputStream(baos);
+			ByteArrayOutputStream	baos	= new ByteArrayOutputStream();
+			ObjectOutputStream		oos		= new ObjectOutputStream(baos);
 			oos.writeObject(object);
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-			ObjectInputStream    ois  = new ObjectInputStream(bais);
+			ByteArrayInputStream	bais	= new ByteArrayInputStream(baos.toByteArray());
+			ObjectInputStream		ois		= new ObjectInputStream(bais);
 			return (State) ois.readObject();
 		}
 		catch (Exception e)

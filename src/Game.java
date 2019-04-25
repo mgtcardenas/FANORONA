@@ -10,17 +10,18 @@ public class Game
 	private State			currentState;
 	private GameInterface	gameInterface;
 	private Chip			selectedChip;
-	private boolean			userIsStillInTurn;
+	private boolean			userTurn;
 	private Set<Position>	walkedPath;
 	private String			lastDirection;
-	private State			selectedState;
 	
 	public Game(State initialState, GameInterface gameInterface)
 	{
-		this.currentState		= initialState;
-		this.gameInterface		= gameInterface;
-		this.walkedPath			= new HashSet<>();
-		this.userIsStillInTurn	= false;
+		this.currentState	= initialState;
+		this.gameInterface	= gameInterface;
+		this.walkedPath		= new HashSet<>();
+		this.userTurn		= false;
+		
+		initialState.setGame(this);
 	}// end Game - constructor
 	
 	public State getCurrentState()
@@ -59,12 +60,12 @@ public class Game
 				userMovement.perform();
 				
 				if (userMovement.didCapture() && userMovement.hasNextPossibleCaptures()) // User keeps playing
-					userIsStillInTurn = true;
+					userTurn = true;
 				else // Agent/Black Chip's Turn
 				{
 					walkedPath.clear();
 					deselectSelectedChip();
-					userIsStillInTurn = false;
+					userTurn = false;
 					agentMoves();
 				}// end if - else
 			}// end if
@@ -73,13 +74,13 @@ public class Game
 	
 	private void agentMoves()
 	{
-		selectedState = MinMax.miniMaxEasy(currentState);
-		Movement agentMovement = new Movement(selectedState.getChip(), selectedState.getPosition(), this);
+		State		selectedState	= MinMax.miniMaxEasy(currentState);
+		Movement	agentMovement	= new Movement(selectedState.getChip(), selectedState.getPosition(), this);
 		agentMovement.perform();
 		if (agentMovement.didCapture() && agentMovement.hasNextPossibleCaptures())
-			userIsStillInTurn = false;
-		else
-			userIsStillInTurn = true;
+			agentMoves(); // recursively keep playing
+			
+		userTurn = true;
 	}// end agentMoves
 	
 	private void deselectSelectedChip()
@@ -92,7 +93,7 @@ public class Game
 	{
 		Chip clickedChip = ((Chip) event.getSource());
 		
-		if (!userIsStillInTurn) // If the user is still in turn, he/she cannot change the selected chip
+		if (!userTurn) // If the user is still in turn, he/she cannot change the selected chip
 		{
 			if (selectedChip != null)
 				selectedChip.setEffect(null);

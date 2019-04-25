@@ -8,11 +8,6 @@ public class Chip extends Circle implements Serializable
 	public static final double	RADIUS	= 25; // for the view
 	private Position			position;
 	
-	/**
-	 * To create a Chip, only a the color of it
-	 * 
-	 * @param color the color of the chip
-	 */
 	public Chip(Color color)
 	{
 		this.position = null;
