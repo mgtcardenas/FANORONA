@@ -1,14 +1,13 @@
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import javafx.scene.paint.Color;
-
-public class Movement
+public class Movement implements Serializable
 {
 	private Game		game;
 	private Chip		chip;
 	private Position	destinationPos;
-	private Color		deletionColor;
+	private String		deletionColor;
 	private String		direction;
 	private String		oppositeDirection;
 	private boolean		captured;
@@ -18,7 +17,7 @@ public class Movement
 		this.chip				= chip;
 		this.destinationPos		= destinationPos;
 		this.game				= game;
-		this.deletionColor		= chip.getFill() == Color.WHITE ? Color.BLACK : Color.WHITE;
+		this.deletionColor		= chip.getColorType().equals("white") ? "black" : "white";
 		this.direction			= getDirection(chip.getPosition(), destinationPos);
 		this.oppositeDirection	= getDirection(destinationPos, chip.getPosition());
 	}// end Movement - constructor
@@ -74,7 +73,7 @@ public class Movement
 		for (int posY = chipY - 2; posY <= chipY + 2; posY += 2) // Check for all of opponent's chips on outer square of chip
 			for (int posX = chipX - 2; posX <= chipX + 2; posX += 2)
 				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.getGrid()[posY][posX].getChip() != null)
-					if (currentState.getGrid()[posY][posX].getChip().getFill() == deletionColor)
+					if (currentState.getGrid()[posY][posX].getChip().getColorType().equals(deletionColor))
 						possiblePositions.add(currentState.getGrid()[chipY + (posY - chipY) / 2][chipX + (posX - chipX) / 2]);
 					
 		possiblePositions.removeAll(game.getWalkedPath()); // You can't go back to a previous position
@@ -109,13 +108,15 @@ public class Movement
 		
 		for (int posY = chipY - 1; posY <= chipY + 1; posY++) // Check for all of opponent's chips on outer square of chip
 			for (int posX = chipX - 1; posX <= chipX + 1; posX++)
-				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.getGrid()[posY][posX].getChip() != null)
-					if (currentState.getGrid()[posY][posX].getChip().getFill() == deletionColor)
-						possiblePositions.add(currentState.getGrid()[chipY + (posY - chipY) * -1][chipX + (posX - chipX) * -1]);
-					
+				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.getGrid()[posY][posX].getChip() != null) // Don't select out of bounds
+					if (currentState.getGrid()[posY][posX].getChip().getColorType().equals(deletionColor))
+						if ((chipY + (posY - chipY) * -1) >= 0 && (chipY + (posY - chipY) * -1) <= 4 && (chipX + (posX - chipX) * -1) >= 0 && (chipX + (posX - chipX) * -1) <= 8) // Don't select out of bounds
+							possiblePositions.add(currentState.getGrid()[chipY + (posY - chipY) * -1][chipX + (posX - chipX) * -1]);
+						
 		possiblePositions.removeAll(game.getWalkedPath()); // You can't go back to a previous position
 		
 		if (chip.getPosition().getType().equals("weak"))
+		
 		{
 			for (Position position : possiblePositions)
 			{
@@ -205,7 +206,7 @@ public class Movement
 		while (y >= 0 && y <= 4 && x >= 0 && x <= 8)
 		{
 			removalPosition = currentState.getGrid()[y][x];
-			if (removalPosition.getChip() != null && removalPosition.getChip().getFill() == deletionColor)
+			if (removalPosition.getChip() != null && removalPosition.getChip().getColorType().equals(deletionColor))
 				remove(removalPosition.getChip());
 			else
 				break;
@@ -229,56 +230,56 @@ public class Movement
 				if ((posY - 1) == -1) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY - 1][posX].getChip() != null)
-					return currentState.getGrid()[posY - 1][posX].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY - 1][posX].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "up-right":
 				if ((posY - 1) == -1 || (posX + 1) == 9) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY - 1][posX + 1].getChip() != null)
-					return currentState.getGrid()[posY - 1][posX + 1].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY - 1][posX + 1].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "right":
 				if ((posX + 1) == 9) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY][posX + 1].getChip() != null)
-					return currentState.getGrid()[posY][posX + 1].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY][posX + 1].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "down-right":
 				if ((posY + 1) == 5 || (posX + 1) == 9) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY + 1][posX + 1].getChip() != null)
-					return currentState.getGrid()[posY + 1][posX + 1].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY + 1][posX + 1].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "down":
 				if ((posY + 1) == 5) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY + 1][posX].getChip() != null)
-					return currentState.getGrid()[posY + 1][posX].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY + 1][posX].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "down-left":
 				if ((posY + 1) == 5 || (posX - 1) == -1) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY + 1][posX - 1].getChip() != null)
-					return currentState.getGrid()[posY + 1][posX - 1].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY + 1][posX - 1].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "left":
 				if ((posX - 1) == -1) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY][posX - 1].getChip() != null)
-					return currentState.getGrid()[posY][posX - 1].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY][posX - 1].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			case "up-left":
 				if ((posY - 1) == -1 || (posX - 1) == -1) // It's out of bounds
 					return false;
 				else if (currentState.getGrid()[posY - 1][posX - 1].getChip() != null)
-					return currentState.getGrid()[posY - 1][posX - 1].getChip().getFill() == deletionColor;
+					return currentState.getGrid()[posY - 1][posX - 1].getChip().getColorType().equals(deletionColor);
 				break;
 			
 			default:

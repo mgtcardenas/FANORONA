@@ -7,11 +7,12 @@ public class Chip extends Circle implements Serializable
 {
 	public static final double	RADIUS	= 25; // for the view
 	private Position			position;
+	private String				colorType;
 	
 	public Chip(Color color)
 	{
-		this.position = null;
-		
+		this.position	= null;
+		this.colorType	= color == Color.WHITE ? "white" : "black";
 		this.setFill(color);
 		this.setRadius(RADIUS);
 		this.setStroke(Color.BLACK);
@@ -27,5 +28,10 @@ public class Chip extends Circle implements Serializable
 	{
 		this.position = position;
 	}// end setPosition
+	
+	public String getColorType()
+	{
+		return colorType;
+	}// end getColorType
 		// endregion Getters & Setters
 }// end Chip - class

@@ -54,6 +54,6 @@ public class Position extends Rectangle implements Serializable
 	public String getType()
 	{
 		return type;
-	}// end getType
+	}// end getColorType
 		// endregion Getters & Setters
 }// end Position - class

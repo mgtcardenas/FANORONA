@@ -108,14 +108,14 @@ public class State implements Comparable<State>, Serializable
 	public LinkedList<Movement> getPossibleMovements(boolean agentMovements)
 	{
 		LinkedList<Movement>	possibleMovements;
-		Color					color;
+		String					colorType;
 		
-		color				= agentMovements ? Color.BLACK : Color.WHITE;
+		colorType			= agentMovements ? "black" : "white";
 		possibleMovements	= new LinkedList<>();
 		
 		for (int y = 0; y < grid.length; y++) // Set the Positions in place
 			for (int x = 0; x < grid[y].length; x++)
-				if (grid[y][x].getChip() != null && grid[y][x].getChip().getFill() == color)
+				if (grid[y][x].getChip() != null && grid[y][x].getChip().getColorType().equals(colorType))
 					possibleMovements.addAll(getMovements(grid[y][x].getChip()));
 				
 		return possibleMovements;
@@ -137,20 +137,28 @@ public class State implements Comparable<State>, Serializable
 	
 	public void expansion(boolean agentMoves)
 	{
-		State					child;
 		LinkedList<Movement>	possibleMovements;
+		LinkedList<Movement>	possibleChildrenMovements;
+		LinkedList<State>		possibleChildren;
 		
-		this.children		= new LinkedList<>();
+		possibleChildren	= new LinkedList<>();
 		possibleMovements	= getPossibleMovements(agentMoves);
 		
-		for (Movement possibleMovement : possibleMovements)
+		for (int i = 0; i < possibleMovements.size(); i++)
+			possibleChildren.add(i, deepClone(this)); // with this deep clone even the game object of this state
+			
+		for (int i = 0; i < possibleMovements.size(); i++)
 		{
-			child = deepClone(this); // with this deep clone even the game object of this state
-			child.setChip(possibleMovement.getChip());
-			child.setPosition(possibleMovement.getDestinationPos());
-			child.performMovement();
-			this.children.add(child);
+			this.chip					= possibleMovements.get(i).getChip();
+			this.position				= possibleMovements.get(i).getDestinationPos();
+			
+			possibleChildrenMovements	= possibleChildren.get(i).getPossibleMovements(agentMoves);
+			possibleChildren.get(i).setChip(possibleChildrenMovements.get(i).getChip());
+			possibleChildren.get(i).setPosition(possibleChildrenMovements.get(i).getDestinationPos());
+			possibleChildren.get(i).performMovement();
 		}// end foreach
+		
+		this.children = possibleChildren;
 	}// end expansion
 	
 	private void performMovement()

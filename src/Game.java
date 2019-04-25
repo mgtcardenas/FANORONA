@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -5,14 +6,14 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
-public class Game
+public class Game implements Serializable
 {
-	private State			currentState;
-	private GameInterface	gameInterface;
-	private Chip			selectedChip;
-	private boolean			userTurn;
-	private Set<Position>	walkedPath;
-	private String			lastDirection;
+	private State					currentState;
+	private transient GameInterface	gameInterface;
+	private Chip					selectedChip;
+	private boolean					userTurn;
+	private Set<Position>			walkedPath;
+	private String					lastDirection;
 	
 	public Game(State initialState, GameInterface gameInterface)
 	{
@@ -66,7 +67,7 @@ public class Game
 					walkedPath.clear();
 					deselectSelectedChip();
 					userTurn = false;
-					agentMoves();
+					// agentMoves();
 				}// end if - else
 			}// end if
 		}// end if
