@@ -74,16 +74,16 @@ public class Game implements Serializable
 	{
 		Chip clickedChip = ((Chip) event.getSource());
 		
-		// if (!currentState.turn.equals("user")) // If the user is still in turn, he/she cannot change the selected chip
-		// {
-		if (selectedChip != null)
-			selectedChip.setEffect(null);
-		
-		System.out.println("I'm a white chip");
-		
-		selectedChip = clickedChip;
-		selectedChip.setEffect(new DropShadow(10, 0f, 0d, Color.DEEPSKYBLUE));
-		// }// end if
+		if (!currentState.turn.equals("user")) // If the user is still in turn, he/she cannot change the selected chip
+		{
+			if (selectedChip != null)
+				selectedChip.setEffect(null);
+			
+			System.out.println("I'm a white chip");
+			
+			selectedChip = clickedChip;
+			selectedChip.setEffect(new DropShadow(10, 0f, 0d, Color.DEEPSKYBLUE));
+		}// end if
 	}// end handleWhiteChipClicks
 	
 	public void handleBlackChipClicks(MouseEvent event)
@@ -114,6 +114,11 @@ public class Game implements Serializable
 					case 'X':
 						chip.setStroke(Color.BLACK);
 						chip.setFill(Color.WHITE);
+						if (currentState.desY == y && currentState.desX == x)
+						{
+							selectedChip = chip;
+							selectedChip.setEffect(new DropShadow(10, 0f, 0d, Color.DEEPSKYBLUE));
+						}// end if
 						chip.setOnMouseClicked(this::handleWhiteChipClicks);
 						gameInterface.getChildren().add(chip);
 						break;
