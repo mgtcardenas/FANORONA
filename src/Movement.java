@@ -136,10 +136,9 @@ public class Movement implements Serializable
 		
 		char symbol = currentState.grid[desY][desX]; // desY & desX because chip already moved
 		
-		currentState.turn = (symbol == 'O') ? "agent" : "user";
-		
 		if (captured && hasNextPossibleCaptures())
 		{
+			currentState.turn = (symbol == 'O') ? "agent-playing" : "user-playing"; // keeps playing
 			currentState.walkedPath.add(this); // add the movement to the walked path
 			currentState.lastDirection = direction; // add the last direction from the movement to the current state
 		}
@@ -147,7 +146,7 @@ public class Movement implements Serializable
 		{
 			currentState.walkedPath.clear(); // clear the walked path
 			currentState.lastDirection	= ""; // clear the last direction
-			currentState.turn			= currentState.turn.equals("agent") ? "" : "agent"; // if we change to "user" instead of "", then the user won't be able to choose a white chip next time
+			currentState.turn			= (symbol == 'O') ? "user" : "agent"; // change turns
 		}// end if - else
 	}// end perform
 	
@@ -178,7 +177,7 @@ public class Movement implements Serializable
 		for (Movement pastMov : currentState.walkedPath)
 			if (desY == pastMov.oriY && desX == pastMov.oriX)
 				return false;
-		
+			
 		return true;
 	}// end isValid
 	

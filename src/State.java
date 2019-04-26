@@ -19,7 +19,7 @@ public class State implements Comparable<State>, Serializable
 	
 	public State()
 	{
-		this.turn			= "agent";
+		this.turn			= "user";
 		this.walkedPath		= new HashSet<>();
 		this.lastDirection	= "";
 		this.grid			= new char[5][9];

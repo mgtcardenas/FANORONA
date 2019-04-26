@@ -27,51 +27,19 @@ public class Game implements Serializable
 		if (selectedChip != null)
 		{
 			Movement userMovement = new Movement(selectedChip.y, selectedChip.x, clickedSpace.y, clickedSpace.x, currentState);
-			
 			if (userMovement.isValid())
 			{
 				userMovement.perform();
-				
 				if (currentState.turn.equals("agent"))
 				{
 					deselectSelectedChip();
 					agentMoves();
 				}// end if
-				
 			}// end if
 		}// end if
 		
 		updateInterface(false);
 	}// end handleSpaceClicks
-	
-	private boolean gameIsOver()
-	{
-		int	numO	= 0;
-		int	numX	= 0;
-		
-		for (int y = 0; y < currentState.grid.length; y++) // Set the Positions in place
-		{
-			for (int x = 0; x < currentState.grid[y].length; x++)
-			{
-				numO	+= (currentState.grid[y][x] == 'O' ? 1 : 0);
-				numX	+= (currentState.grid[y][x] == 'X' ? 1 : 0);
-			}// end for - x
-		}// end for - y
-		
-		if (numO == 0 || numX == 0)
-			winner = (numO == 0) ? "user" : "agent";
-		
-		return numO == 0 || numX == 0;
-	}// end gameIsOver
-	
-	private void alertWinner()
-	{
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle("We Have a Winner!");
-		alert.setHeaderText("And the Winner Is...");
-		alert.setContentText(winner);
-		alert.showAndWait();
-	}// end alertWinner
 	
 	private void agentMoves()
 	{
@@ -98,7 +66,7 @@ public class Game implements Serializable
 	{
 		Chip clickedChip = ((Chip) event.getSource());
 		
-		if (!currentState.turn.equals("user")) // If the user is still in turn, he/she cannot change the selected chip
+		if (!currentState.turn.equals("user-playing")) // If the user is still in turn, he/she cannot change the selected chip
 		{
 			if (selectedChip != null)
 				selectedChip.setEffect(null);
@@ -149,4 +117,33 @@ public class Game implements Serializable
 			}// end for x
 		}// end for - i
 	}// end updateInterface
+	
+	private void alertWinner()
+	{
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("We Have a Winner!");
+		alert.setHeaderText("And the Winner Is...");
+		alert.setContentText(winner);
+		alert.showAndWait();
+	}// end alertWinner
+	
+	private boolean gameIsOver()
+	{
+		int	numO	= 0;
+		int	numX	= 0;
+		
+		for (int y = 0; y < currentState.grid.length; y++) // Set the Positions in place
+		{
+			for (int x = 0; x < currentState.grid[y].length; x++)
+			{
+				numO	+= (currentState.grid[y][x] == 'O' ? 1 : 0);
+				numX	+= (currentState.grid[y][x] == 'X' ? 1 : 0);
+			}// end for - x
+		}// end for - y
+		
+		if (numO == 0 || numX == 0)
+			winner = (numO == 0) ? "user" : "agent";
+		
+		return numO == 0 || numX == 0;
+	}// end gameIsOver
 }// end Game - class
