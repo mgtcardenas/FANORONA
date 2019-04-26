@@ -2,7 +2,7 @@ import javafx.scene.shape.Circle;
 
 public class Chip extends Circle
 {
-	public static final double	RADIUS	= 25; // for the view
+	public static final double	RADIUS	= 25;
 	int							y;
 	int							x;
 	

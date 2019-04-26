@@ -129,11 +129,25 @@ public class State implements Comparable<State>, Serializable
 		int						chipX		= chip.getPosition().getxCoordinate();
 		int						chipY		= chip.getPosition().getyCoordinate();
 		
-		for (int posY = chipY - 1; posY <= chipY + 1; posY++) // Check all adjacent positions
-			for (int posX = chipX - 1; posX <= chipX + 1; posX++)
-				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && grid[posY][posX].getChip() == null)
-					movements.add(new Movement(chip, grid[posY][posX], game));
-				
+		if (chip.getPosition().getType().equals("weak"))
+		{
+			if (chipX - 1 >= 0 && grid[chipY][chipX - 1].getChip() == null)
+				movements.add(new Movement(chip, grid[chipY][chipX - 1], game));
+			if (chipX + 1 <= 8 && grid[chipY][chipX + 1].getChip() == null)
+				movements.add(new Movement(chip, grid[chipY][chipX + 1], game));
+			if (chipY - 1 >= 0 && grid[chipY - 1][chipX].getChip() == null)
+				movements.add(new Movement(chip, grid[chipY - 1][chipX], game));
+			if (chipY + 1 <= 4 && grid[chipY + 1][chipX].getChip() == null)
+				movements.add(new Movement(chip, grid[chipY + 1][chipX], game));
+		}
+		else
+		{
+			for (int posY = chipY - 1; posY <= chipY + 1; posY++) // Check all adjacent positions
+				for (int posX = chipX - 1; posX <= chipX + 1; posX++)
+					if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && grid[posY][posX].getChip() == null)
+						movements.add(new Movement(chip, grid[posY][posX], game));
+		}// end if - else
+		
 		return movements;
 	}// end getMovements
 	

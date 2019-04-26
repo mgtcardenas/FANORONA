@@ -78,10 +78,10 @@ public class Game implements Serializable
 	
 	private void agentMoves()
 	{
-		State selectedState = MinMax.miniMaxEasy(currentState);
-		// Movement agentMovement = new Movement(currentState.getChip(), currentState.getPosition(), this);
-		// lastDirection = agentMovement.getDirection();
-		// agentMovement.perform();
+		State		selectedState	= MinMax.miniMaxEasy(currentState);
+		Movement	agentMovement	= new Movement(currentState.getChip(), currentState.getPosition(), this);
+		lastDirection = agentMovement.getDirection();
+		agentMovement.perform();
 		// if (agentMovement.didCapture() && agentMovement.hasNextPossibleCaptures())
 		// {
 		// walkedPath.add(currentState.getChip().getPosition());
@@ -89,9 +89,9 @@ public class Game implements Serializable
 		// }// end if
 		// else
 		// {
-		walkedPath.clear();
-		lastDirection	= "";
-		userTurn		= true;
+		// walkedPath.clear();
+		// lastDirection = "";
+		// userTurn = true;
 		// }// end if
 	}// end agentMoves
 	

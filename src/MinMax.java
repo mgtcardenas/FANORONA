@@ -1,5 +1,3 @@
-package failed;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class MinMax
 		candidates.add(maxChild);
 		
 		for (int i = 1; i < children.size(); i++)
-			if (maxChild.getPayoff() == children.get(i).getPayoff())
+			if (maxChild.payoff == children.get(i).payoff)
 				candidates.add(children.get(i));
 			else
 				break;
@@ -34,20 +32,20 @@ public class MinMax
 		State				minGrandChild;
 		
 		state.expansion(true);
-		children = state.getChildren(); // expansion
+		children = state.children; // expansion
 		
-		// for (int i = 0; i < children.size(); i++) // Min
-		// {
-		// children.get(i).expansion(false);
-		// grandChildren = children.get(i).getChildren(); // expansion of each child
-		//
-		// for (int j = 0; j < grandChildren.size(); j++)
-		// grandChildren.get(j).payOffFunction(); // calculate the payoff of each grand child
-		//
-		// Collections.sort(grandChildren);
-		// minGrandChild = grandChildren.get(0);
-		// children.get(i).setPayoff(minGrandChild.getPayoff()); // inheritance of the minimal payoff value
-		// }// end for - i
+		for (int i = 0; i < children.size(); i++) // Min
+		{
+			children.get(i).expansion(false);
+			grandChildren = children.get(i).children; // expansion of each child
+			
+			for (int j = 0; j < grandChildren.size(); j++)
+				grandChildren.get(j).payOffFunction(); // calculate the payoff of each grand child
+				
+			Collections.sort(grandChildren);
+			minGrandChild			= grandChildren.get(0);
+			children.get(i).payoff	= minGrandChild.payoff; // inheritance of the minimal payoff value
+		}// end for - i
 		
 		return selectMaxChild(children);
 	}// end miniMaxEasy
