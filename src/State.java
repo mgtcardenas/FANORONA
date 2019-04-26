@@ -91,6 +91,11 @@ public class State implements Comparable<State>, Serializable
 		
 		children			= new LinkedList<>();
 		possibleMovements	= getPossibleMovements(agentMoves);
+		
+		for (int i = possibleMovements.size() - 1; i >= 0; i--) // Remove invalid movements
+			if (!possibleMovements.get(i).isValid())
+				possibleMovements.remove(i);
+			
 		for (Movement possibleMovement : possibleMovements)
 		{
 			possibleMovement.perform(); // To get the state that this movement takes us to
@@ -121,13 +126,13 @@ public class State implements Comparable<State>, Serializable
 		
 		int	chipDifference	= getChipDifference();
 		
-		if (turn.equals("agent"))
+		if (turn.equals("agent-playing"))
 			utility += 4;
 		
 		if (chipDifference > 0)
 			utility += chipDifference;
 		
-		if (turn.equals("user") || turn.equals(""))
+		if (turn.equals("user-playing"))
 			utility -= 4;
 		
 		if (chipDifference < 0)

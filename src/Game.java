@@ -30,11 +30,13 @@ public class Game implements Serializable
 			if (userMovement.isValid())
 			{
 				userMovement.perform();
-				if (currentState.turn.equals("agent"))
+				if (gameIsOver())
+					alertWinner();
+				else if (currentState.turn.equals("agent"))
 				{
 					deselectSelectedChip();
 					agentMoves();
-				}// end if
+				}// end if - else
 			}// end if
 		}// end if
 		
@@ -50,9 +52,9 @@ public class Game implements Serializable
 		{
 			alertWinner();
 		}
-		else // if(currentState.turn.equals("agent))
+		else if (currentState.turn.equals("agent-playing"))
 		{
-			//
+			agentMoves();
 		}// end if
 	}// end agentMoves
 	
@@ -142,7 +144,7 @@ public class Game implements Serializable
 		}// end for - y
 		
 		if (numO == 0 || numX == 0)
-			winner = (numO == 0) ? "user" : "agent";
+			winner = (numO == 0) ? "The User" : "The Agent";
 		
 		return numO == 0 || numX == 0;
 	}// end gameIsOver

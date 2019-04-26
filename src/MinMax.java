@@ -28,23 +28,50 @@ public class MinMax
 	public static State miniMaxEasy(State state)
 	{
 		LinkedList<State>	children;
-		LinkedList<State>	grandChildren;
-		State				minGrandChild;
+		LinkedList<State>	goodGrandChildren;
+		LinkedList<State>	badGrandChildren;
+		State				grandChild;
 		
 		state.expansion(true);
 		children = state.children; // expansion
 		
 		for (int i = 0; i < children.size(); i++) // Min
 		{
-			children.get(i).expansion(false);
-			grandChildren = children.get(i).children; // expansion of each child
-			
-			for (int j = 0; j < grandChildren.size(); j++)
-				grandChildren.get(j).payOffFunction(); // calculate the payoff of each grand child
+			if (children.get(i).turn.equals("agent-playing")) // the agent would keep playing in this possible move
+			{
+				children.get(i).expansion(true);
+				goodGrandChildren = children.get(i).children;
 				
-			Collections.sort(grandChildren);
-			minGrandChild			= grandChildren.get(0);
-			children.get(i).payoff	= minGrandChild.payoff; // inheritance of the minimal payoff value
+				for (int j = 0; j < goodGrandChildren.size(); j++)
+					goodGrandChildren.get(j).payOffFunction(); // calculate the payoff of each good grand child
+					
+				Collections.reverse(goodGrandChildren); // The best child is the first
+				if (goodGrandChildren.size() > 0)
+				{
+					grandChild				= goodGrandChildren.get(0);
+					children.get(i).payoff	= grandChild.payoff;
+				}
+				else
+					children.get(i).payOffFunction();
+			}
+			else // the user will play in this possible move
+			{
+				children.get(i).expansion(false);
+				badGrandChildren = children.get(i).children;
+				
+				for (int j = 0; j < badGrandChildren.size(); j++)
+					badGrandChildren.get(j).payOffFunction(); // calculate the payoff of each good grand child
+					
+				Collections.sort(badGrandChildren); // The least bad child is the first
+				
+				if (badGrandChildren.size() > 0)
+				{
+					grandChild				= badGrandChildren.get(0);
+					children.get(i).payoff	= grandChild.payoff; // inheritance of the minimal payoff value
+				}
+				else
+					children.get(i).payOffFunction();
+			}// end if - else
 		}// end for - i
 		
 		return selectMaxChild(children);

@@ -129,10 +129,12 @@ public class Movement implements Serializable
 	{
 		captured = capture();
 		moveChip();
-		currentState.oriY	= oriY;
-		currentState.oriX	= oriX;
-		currentState.desY	= desY;
-		currentState.desX	= desX;
+		currentState.oriY			= oriY;
+		currentState.oriX			= oriX;
+		currentState.desY			= desY;
+		currentState.desX			= desX;
+		
+		currentState.lastDirection	= direction; // add the last direction from the movement to the current state, it's important to calculating next possible captures
 		
 		char symbol = currentState.grid[desY][desX]; // desY & desX because chip already moved
 		
@@ -140,7 +142,6 @@ public class Movement implements Serializable
 		{
 			currentState.turn = (symbol == 'O') ? "agent-playing" : "user-playing"; // keeps playing
 			currentState.walkedPath.add(this); // add the movement to the walked path
-			currentState.lastDirection = direction; // add the last direction from the movement to the current state
 		}
 		else
 		{
@@ -178,8 +179,19 @@ public class Movement implements Serializable
 			if (desY == pastMov.oriY && desX == pastMov.oriX)
 				return false;
 			
+		if (currentState.turn.equals("agent-playing") && isNotConnected())
+			return false;
+		
+		if (currentState.turn.equals("user-playing") && isNotConnected())
+			return false;
+		
 		return true;
 	}// end isValid
+	
+	private boolean isNotConnected()
+	{
+		return (currentState.desY != oriY || currentState.desX != oriX);
+	}// end isNotConnected
 	
 	private boolean removeInDirection(boolean inOppositeDirection)
 	{
