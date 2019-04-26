@@ -63,22 +63,22 @@ public class Movement implements Serializable
 	{
 		List<Movement> possibleMovements = new LinkedList<>();
 		
-		for (int posY = oriY - 2; posY <= oriY + 2; posY += 2) // Check for all of opponent's chips on outer square of chip
-			for (int posX = oriX - 2; posX <= oriX + 2; posX += 2)
-				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.grid[posY][posX] != ' ')
-					if (currentState.grid[posY][posX] == (currentState.grid[oriY][oriX] == 'X' ? 'O' : 'X'))
-						possibleMovements.add(new Movement(oriY, oriX, oriY + (posY - oriY) / 2, oriX + (posX - oriX) / 2, currentState));
+		for (int posY = desY - 2; posY <= desY + 2; posY += 2) // Check for all of opponent's chips on outer square of chip
+			for (int posX = desX - 2; posX <= desX + 2; posX += 2) // Use desY & desX because we already moved by the time we ask this
+				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.grid[posY][posX] != ' ') // There's no one there
+					if (currentState.grid[posY][posX] == (currentState.grid[desY][desX] == 'X' ? 'O' : 'X')) // It's the opponent
+						possibleMovements.add(new Movement(desY, desX, desY + (posY - desY) / 2, desX + (posX - desX) / 2, currentState));
 					
 		removePreviousPositions(possibleMovements); // You can't go back to a previous position
 		removeConsecutiveDirection(possibleMovements);        // It is not permitted to move twice consecutively in the same direction
 		
-		if ((oriY + oriX) % 2 != 0) // It's a weak position
+		if ((desY + desX) % 2 != 0) // It's a weak position
 		{
 			for (Movement movement : possibleMovements)
 			{
-				if (Math.abs(movement.desX - oriX) == 1 && movement.desY == oriY && currentState.grid[movement.desY][movement.desX] == ' ')
+				if (Math.abs(movement.desX - desX) == 1 && movement.desY == desY && currentState.grid[movement.desY][movement.desX] == ' ')
 					return true;
-				if (Math.abs(movement.desY - oriY) == 1 && movement.desX == oriX && currentState.grid[movement.desY][movement.desX] == ' ')
+				if (Math.abs(movement.desY - desY) == 1 && movement.desX == desX && currentState.grid[movement.desY][movement.desX] == ' ')
 					return true;
 			}// end foreach
 		}
@@ -96,22 +96,22 @@ public class Movement implements Serializable
 	{
 		List<Movement> possibleMovements = new LinkedList<>();
 		
-		for (int posY = oriY - 1; posY <= oriY + 1; posY++) // Check for all of opponent's chips on outer square of chip
-			for (int posX = oriX - 1; posX <= oriX + 1; posX++)
+		for (int posY = desY - 1; posY <= desY + 1; posY++) // Check for all of opponent's chips on outer square of chip
+			for (int posX = desX - 1; posX <= desX + 1; posX++) // Use desY & desX because we already moved by the time we ask this
 				if (posY >= 0 && posY <= 4 && posX >= 0 && posX <= 8 && currentState.grid[posY][posX] != ' ') // Don't select out of bounds
-					if (currentState.grid[posY][posX] == (currentState.grid[oriY][oriX] == 'X' ? 'O' : 'X'))
-						if ((oriY + (posY - oriY) * -1) >= 0 && (oriY + (posY - oriY) * -1) <= 4 && (oriX + (posX - oriX) * -1) >= 0 && (oriX + (posX - oriX) * -1) <= 8) // Don't select out of bounds
-							possibleMovements.add(new Movement(oriY, oriX, oriY + (posY - oriY) * -1, oriX + (posX - oriX) * -1, currentState));
+					if (currentState.grid[posY][posX] == (currentState.grid[desY][desX] == 'X' ? 'O' : 'X')) // It's the opponent
+						if ((desY + (posY - desY) * -1) >= 0 && (desY + (posY - desY) * -1) <= 4 && (desX + (posX - desX) * -1) >= 0 && (desX + (posX - desX) * -1) <= 8) // Don't select out of bounds
+							possibleMovements.add(new Movement(desY, desX, desY + (posY - desY) * -1, desX + (posX - desX) * -1, currentState));
 						
 		removePreviousPositions(possibleMovements); // You can't go back to a previous position
 		
-		if ((oriY + oriX) % 2 != 0) // It's a weak position
+		if ((desY + desX) % 2 != 0) // It's a weak position
 		{
 			for (Movement movement : possibleMovements)
 			{
-				if (Math.abs(movement.desX - oriX) == 1 && movement.desY == oriY && currentState.grid[movement.desY][movement.desX] == ' ')
+				if (Math.abs(movement.desX - desX) == 1 && movement.desY == desY && currentState.grid[movement.desY][movement.desX] == ' ')
 					return true;
-				if (Math.abs(movement.desY - oriY) == 1 && movement.desX == oriX && currentState.grid[movement.desY][movement.desX] == ' ')
+				if (Math.abs(movement.desY - desY) == 1 && movement.desX == desX && currentState.grid[movement.desY][movement.desX] == ' ')
 					return true;
 			}// end foreach
 		}
@@ -165,10 +165,19 @@ public class Movement implements Serializable
 	{
 		if (currentState.grid[desY][desX] != ' ')
 			return false;
+		
 		if (!isAdjacent())
 			return false;
+		
 		if ((oriY + oriX) % 2 != 0 && isPlacedDiagonally())
 			return false;
+		
+		if (currentState.lastDirection.equals(direction))
+			return false;
+		
+		for (Movement pastMov : currentState.walkedPath)
+			if (desY == pastMov.oriY && desX == pastMov.oriX)
+				return false;
 		
 		return true;
 	}// end isValid

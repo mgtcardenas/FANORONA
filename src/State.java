@@ -19,11 +19,12 @@ public class State implements Comparable<State>, Serializable
 	
 	public State()
 	{
-		this.turn		= "agent";
-		this.walkedPath	= new HashSet<>();
-		this.grid		= new char[5][9];
+		this.turn			= "agent";
+		this.walkedPath		= new HashSet<>();
+		this.lastDirection	= "";
+		this.grid			= new char[5][9];
 		
-		grid[2][4]		= ' '; // Setting the only Blank Space
+		grid[2][4]			= ' '; // Setting the only Blank Space
 		
 		for (int y = 0; y <= 1; y++) // Setting Black Chips / 'O'
 			for (int x = 0; x < grid[y].length; x++)

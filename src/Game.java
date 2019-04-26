@@ -1,7 +1,6 @@
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
+import javafx.scene.control.Alert;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -11,14 +10,13 @@ public class Game implements Serializable
 	State			currentState;
 	GameInterface	gameInterface;
 	Chip			selectedChip;
-	Set<Movement>	walkedPath;
-	String			lastDirection;
+	String			winner;
 	
 	public Game(State initialState, GameInterface gameInterface)
 	{
 		this.currentState	= initialState;
 		this.gameInterface	= gameInterface;
-		this.walkedPath		= new HashSet<>();
+		this.winner			= "";
 	}// end Game - constructor
 	
 	public void handleSpaceClicks(MouseEvent event)
@@ -46,22 +44,48 @@ public class Game implements Serializable
 		updateInterface(false);
 	}// end handleSpaceClicks
 	
+	private boolean gameIsOver()
+	{
+		int	numO	= 0;
+		int	numX	= 0;
+		
+		for (int y = 0; y < currentState.grid.length; y++) // Set the Positions in place
+		{
+			for (int x = 0; x < currentState.grid[y].length; x++)
+			{
+				numO	+= (currentState.grid[y][x] == 'O' ? 1 : 0);
+				numX	+= (currentState.grid[y][x] == 'X' ? 1 : 0);
+			}// end for - x
+		}// end for - y
+		
+		if (numO == 0 || numX == 0)
+			winner = (numO == 0) ? "user" : "agent";
+		
+		return numO == 0 || numX == 0;
+	}// end gameIsOver
+	
+	private void alertWinner()
+	{
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("We Have a Winner!");
+		alert.setHeaderText("And the Winner Is...");
+		alert.setContentText(winner);
+		alert.showAndWait();
+	}// end alertWinner
+	
 	private void agentMoves()
 	{
 		State		selectedState	= MinMax.miniMaxEasy(currentState);
 		Movement	agentMovement	= new Movement(selectedState.oriY, selectedState.oriX, selectedState.desY, selectedState.desX, currentState);
 		agentMovement.perform();
-		// if (agentMovement.didCapture() && agentMovement.hasNextPossibleCaptures())
-		// {
-		// walkedPath.add(currentState.getChip().getPosition());
-		// agentMoves(); // recursively keep playing
-		// }// end if
-		// else
-		// {
-		// walkedPath.clear();
-		// lastDirection = "";
-		// userTurn = true;
-		// }// end if
+		if (gameIsOver())
+		{
+			alertWinner();
+		}
+		else // if(currentState.turn.equals("agent))
+		{
+			//
+		}// end if
 	}// end agentMoves
 	
 	private void deselectSelectedChip()
@@ -86,11 +110,6 @@ public class Game implements Serializable
 		}// end if
 	}// end handleWhiteChipClicks
 	
-	public void handleBlackChipClicks(MouseEvent event)
-	{
-		updateInterface(false);
-	}// end handleBlackChipClicks
-	
 	public void updateInterface(boolean firstTime)
 	{
 		if (!firstTime) // remove the previous Chips
@@ -108,7 +127,6 @@ public class Game implements Serializable
 					case 'O':
 						chip.setStroke(Color.BLACK);
 						chip.setFill(Color.BLACK);
-						chip.setOnMouseClicked(this::handleBlackChipClicks);
 						gameInterface.getChildren().add(chip);
 						break;
 					case 'X':
