@@ -86,7 +86,7 @@ public class MinMax
 		System.out.println(selectedState);
 		System.out.println("*****************************");
 		return selectedState;
-	}// end miniMaxEasy
+	}// end minMaxEasy
 	
 	public static State miniMaxModerate(State state)
 	{

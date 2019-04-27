@@ -2,8 +2,20 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @author Marco Cárdenas
+ *
+ *         This class holds the algorithm for performing the MinMax algorithm
+ */
 public class MinMax
 {
+	/**
+	 * Select the best state from a list of states, but if there are two or more best states,
+	 * select one of them randomly
+	 * 
+	 * @param  children a list of states
+	 * @return          a single best state from the list of states
+	 */
 	private static State selectMaxChild(List<State> children)
 	{
 		LinkedList<State>	candidates;
@@ -25,7 +37,14 @@ public class MinMax
 		return (candidates.size() > 1) ? candidates.get((int) (Math.random() * candidates.size())) : candidates.get(0);
 	}// end selectMaxChild
 	
-	public static State miniMaxEasy(State state)
+	/**
+	 * Select the most convenient next possible state given a state given how
+	 * the payoff function of a state calculates the payoff of a state
+	 * 
+	 * @param  state a state of the game, usually the current state of the game
+	 * @return       the most convenient next possible state
+	 */
+	public static State minMaxEasy(State state)
 	{
 		LinkedList<State>	children;
 		LinkedList<State>	goodGrandChildren;
@@ -33,9 +52,9 @@ public class MinMax
 		State				grandChild;
 		
 		state.expansion(true);
-		children = state.children; // expansion
+		children = state.children;
 		
-		for (int i = 0; i < children.size(); i++) // Min
+		for (int i = 0; i < children.size(); i++)
 		{
 			if (children.get(i).turn.equals("agent-playing")) // the agent would keep playing in this possible move
 			{
@@ -75,5 +94,5 @@ public class MinMax
 		}// end for - i
 		
 		return selectMaxChild(children);
-	}// end miniMaxEasy
+	}// end minMaxEasy
 }// end MinMax - class

@@ -50,5 +50,5 @@ public class MinMax
 		// }// end for - i
 		
 		return selectMaxChild(children);
-	}// end miniMaxEasy
+	}// end minMaxEasy
 }// end MinMax - class

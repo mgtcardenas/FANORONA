@@ -1,7 +1,12 @@
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
+/**
+ * @author Marco Cárdenas
+ *
+ *         This class is the View of the applciation, it only contains the methods
+ *         for initializing it, that is, to draw the board of the game (the lines)
+ */
 public class GameInterface extends AnchorPane
 {
 	public static final double	SCENE_WIDTH		= 900;
@@ -13,8 +18,7 @@ public class GameInterface extends AnchorPane
 	Line[]						shortDiagonalLines;
 	
 	/**
-	 * It is not necessary to give the Board as arguments since it is a singleton, but the
-	 * GameInterface does use them to build itself
+	 * Creating the GameInterface is just building it's components
 	 */
 	public GameInterface()
 	{
@@ -31,9 +35,6 @@ public class GameInterface extends AnchorPane
 		this.longDiagonalLines	= new Line[6];
 		this.shortDiagonalLines	= new Line[4];
 		
-		// this.whiteChips = new Chip[22];
-		// this.blackChips = new Chip[22];
-		
 		drawVerticalLines(this.verticalLines);
 		drawHorizontalLines(this.horizontalLines);
 		drawLongDiagonalLines(this.longDiagonalLines);
@@ -44,24 +45,7 @@ public class GameInterface extends AnchorPane
 		displayLines(this.longDiagonalLines);
 		displayLines(this.shortDiagonalLines);
 	}// end buildComponents
-//
-//	/**
-//	 * Gives functionality to the visual elements by placing action listeners or event handlers
-//	 *
-//	 * @param controller a Game of Scrabble
-//	 */
-//	public void setEventHandlersAndActionListeners(Game controller)
-//	{
-//		for (int y = 0; y < controller.getCurrentState().getGrid().length; y++) // Handle GridSpaces
-//			for (int x = 0; x < controller.getCurrentState().getGrid()[y].length; x++)
-//				controller.getCurrentState().getGrid()[y][x].setOnMouseClicked(controller::handlePositionClicks);
-//
-//		for (Position[] x : controller.getCurrentState().getGrid()) // Handle White Chips
-//			for (Position p : x)
-//				if (p.getChip() != null && p.getChip().getFill() == Color.WHITE)
-//					p.getChip().setOnMouseClicked(controller::handleWhiteChipClicks);
-//	}// end setEventHandlersAndActionListeners
-//
+	
 	/**
 	 * Creates vertical lines with the correct coordinates on the GameInterface
 	 *
